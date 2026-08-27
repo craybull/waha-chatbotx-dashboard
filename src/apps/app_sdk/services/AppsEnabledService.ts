@@ -21,6 +21,7 @@ import { App } from '../dto/app.dto';
 import { AppRepository } from '../storage/AppRepository';
 import { AppName } from '@waha/apps/app_sdk/apps/name';
 import { AppRuntimeConfig } from '@waha/apps/app_sdk/apps/AppRuntime';
+import { ChatbotXAppService } from '@waha/apps/chatbotx/services/ChatbotXAppService';
 
 export class AppDisableError extends UnprocessableEntityException {
   constructor(app: string) {
@@ -38,6 +39,7 @@ export class AppsEnabledService implements IAppsService {
     @Optional() protected readonly chatwootService: ChatWootAppService,
     @Optional() protected readonly callsAppService: CallsAppService,
     @Optional() protected readonly mcpAppService: McpAppService,
+    @Optional() protected readonly chatbotXAppService: ChatbotXAppService,
   ) {}
 
   async list(manager: SessionManager, session: string): Promise<App[]> {
@@ -267,6 +269,8 @@ export class AppsEnabledService implements IAppsService {
 
   private getAppService(app: App): IAppService | null {
     switch (app.app) {
+      case AppName.chatbotx:
+        return this.chatbotXAppService;
       case AppName.chatwoot:
         return this.chatwootService;
       case AppName.calls:

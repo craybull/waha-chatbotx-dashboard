@@ -15,6 +15,13 @@ export interface AppDefinition {
 
 // All Apps
 export const APPS: Record<AppName, AppDefinition> = {
+  [AppName.chatbotx]: {
+    name: AppName.chatbotx,
+    plainkey: false,
+    queue: false,
+    migrations: false,
+    restartOnChange: true,
+  },
   [AppName.calls]: {
     name: AppName.calls,
     plainkey: false,

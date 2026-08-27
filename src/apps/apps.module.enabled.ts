@@ -13,6 +13,7 @@ import { AppsEnabledService } from '@waha/apps/app_sdk/services/AppsEnabledServi
 import { Auth } from '@waha/core/auth/config';
 import { AppRuntimeConfig } from '@waha/apps/app_sdk/apps/AppRuntime';
 import { AppName } from '@waha/apps/app_sdk/apps/name';
+import { ChatbotXAppExports } from '@waha/apps/chatbotx/chatbotx.module';
 
 const QUEUES_IMPORTS_REQUIRED = [
   BullModule.forRoot({
@@ -80,6 +81,8 @@ function getAppModule(name: AppName) {
     };
   }
   switch (name) {
+    case AppName.chatbotx:
+      return ChatbotXAppExports;
     case AppName.calls:
       return CallsAppExports;
     case AppName.chatwoot:
@@ -95,11 +98,13 @@ export const AppsEnabled = {
   imports: [
     ...QUEUES_IMPORTS,
     ...getAppModule(AppName.mcp).imports,
+    ...getAppModule(AppName.chatbotx).imports,
     ...getAppModule(AppName.chatwoot).imports,
     ...getAppModule(AppName.calls).imports,
   ],
   controllers: [
     AppsController,
+    ...getAppModule(AppName.chatbotx).controllers,
     ...getAppModule(AppName.mcp).controllers,
     ...getAppModule(AppName.chatwoot).controllers,
     ...getAppModule(AppName.calls).controllers,
@@ -109,6 +114,7 @@ export const AppsEnabled = {
       provide: AppsService,
       useClass: AppsEnabledService,
     },
+    ...getAppModule(AppName.chatbotx).providers,
     ...getAppModule(AppName.mcp).providers,
     ...getAppModule(AppName.calls).providers,
     ...getAppModule(AppName.chatwoot).providers,

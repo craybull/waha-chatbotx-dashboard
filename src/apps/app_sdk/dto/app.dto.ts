@@ -1,6 +1,7 @@
 import { ChatWootAppConfig } from '@waha/apps/chatwoot/dto/config.dto';
 import { CallsAppConfig } from '@waha/apps/calls/dto/config.dto';
 import { McpAppConfig } from '@waha/apps/mcp/dto/config.dto';
+import { ChatbotXAppConfig } from '@waha/apps/chatbotx/dto/config.dto';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -15,9 +16,10 @@ import { AppName } from '@waha/apps/app_sdk/apps/name';
 export type AllowedAppConfig =
   | ChatWootAppConfig
   | CallsAppConfig
-  | McpAppConfig;
+  | McpAppConfig
+  | ChatbotXAppConfig;
 
-@ApiExtraModels(ChatWootAppConfig, CallsAppConfig, McpAppConfig)
+@ApiExtraModels(ChatWootAppConfig, CallsAppConfig, McpAppConfig, ChatbotXAppConfig)
 export class App<T extends AllowedAppConfig = any> {
   @IsString()
   id: string;
@@ -43,6 +45,8 @@ export class App<T extends AllowedAppConfig = any> {
   @Type((options) => {
     if (options && options.object && options.object.app) {
       switch (options.object.app) {
+        case AppName.chatbotx:
+          return ChatbotXAppConfig;
         case AppName.chatwoot:
           return ChatWootAppConfig;
         case AppName.calls:
@@ -73,4 +77,9 @@ export class McpAppDto extends App<McpAppConfig> {
   config: McpAppConfig;
 }
 
-export type AppDto = ChatWootAppDto | CallsAppDto | McpAppDto;
+export class ChatbotXAppDto extends App<ChatbotXAppConfig> {
+  @Type(() => ChatbotXAppConfig)
+  config: ChatbotXAppConfig;
+}
+
+export type AppDto = ChatWootAppDto | CallsAppDto | McpAppDto | ChatbotXAppDto;

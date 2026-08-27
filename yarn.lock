@@ -4910,7 +4910,7 @@ __metadata:
 "@wppconnect/wa-js@github:wppconnect-team/wa-js#main":
   version: 4.5.0
   resolution: "@wppconnect/wa-js@https://github.com/wppconnect-team/wa-js.git#commit=259229d5ed1270052967e545646feb66c0ce0494"
-  checksum: 10/d254d6e593bec668f1c5891ccf72ada62a128ae68f7d70ef7e1b0a76b4e5ee48a39450e7a26826132a56ad89be6478d7fd981ee5b892e7a5b2fbf271a3788ab4
+  checksum: 10/f36a6f5eddbc1532603b30df5a72ca0789d6ab807b9fa5fa690d0dc842ef9622bd53e698741b83d1546af9256a0c13c148ff2df4df455eae508d1d8311549bfc
   languageName: node
   linkType: hard
 

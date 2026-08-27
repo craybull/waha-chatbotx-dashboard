@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg-dark: #0B0F17;
+  --bg-surface: #111827;
+  --bg-card: #111827;
+  --bg-card-hover: #1E293B;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-focus: #3B82F6;
+  --brand-blue: #3B82F6;
+  --brand-blue-dark: #2563EB;
+  --brand-violet: #8B5CF6;
+  --brand-indigo: #6366F1;
+  --text-main: #FFFFFF;
+  --text-muted: #9CA3AF;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+code, pre, .font-mono {
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* ChatbotX Clean Cards (Flat, No Shadow) */
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 1.25rem;
+  box-shadow: none !important;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: none !important;
+}
+
+/* ChatbotX Official Blue-Violet Brand Gradient */
+.brand-gradient-text {
+  background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 40%, #A78BFA 80%, #C084FC 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-btn-gradient {
+  background: linear-gradient(135deg, #2563EB 0%, #3B82F6 50%, #7C3AED 100%);
+  box-shadow: none !important;
+  transition: opacity 0.15s ease;
+}
+
+.brand-btn-gradient:hover {
+  opacity: 0.92;
+  box-shadow: none !important;
+}
+
+.brand-btn-gradient:active {
+  opacity: 0.85;
+}
+
+/* Input Styling (Flat, No Shadow) */
+.custom-input {
+  background: #0F172A;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  box-shadow: none !important;
+  transition: border-color 0.15s ease;
+}
+
+.custom-input:focus {
+  outline: none;
+  border-color: var(--brand-blue);
+  box-shadow: none !important;
+  background: #0F172A;
+}
+
+/* Status Indicators */
+.pulse-dot {
+  position: relative;
+}
+
+.pulse-dot.online {
+  background-color: #34D399;
+}
+
+.pulse-dot.warning {
+  background-color: #FBBF24;
+}
+
+.pulse-dot.offline {
+  background-color: #F87171;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(11, 15, 23, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.5);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease forwards;
+}
