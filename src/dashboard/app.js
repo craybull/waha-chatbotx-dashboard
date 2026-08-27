@@ -712,7 +712,7 @@ function showToast(message, type = 'info') {
 }
 
 // 11. Check GitHub Version Updates for Fork
-const GITHUB_FORK_REPO = 'craybull/waha-chatbotx-gateway';
+const GITHUB_FORK_REPO = 'craybull/waha-chatbotx-dashboard';
 
 let currentWahaVersion = '2026.8.1';
 
