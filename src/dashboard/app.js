@@ -757,7 +757,7 @@ function showToast(message, type = 'info') {
 // 11. Check GitHub Version Updates for Fork
 const GITHUB_FORK_REPO = 'craybull/waha-chatbotx-dashboard';
 
-let currentWahaVersion = '2026.8.2';
+let currentWahaVersion = '2026.8.3';
 
 async function fetchLocalVersion() {
   try {
