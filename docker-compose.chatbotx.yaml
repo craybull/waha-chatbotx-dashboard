@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: waha-chatbotx
+    container_name: waha-chatbotx-dashboard
     restart: always
     dns:
       - 1.1.1.1
