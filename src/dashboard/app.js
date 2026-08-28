@@ -731,14 +731,31 @@ async function restartSession() {
 async function logoutSession() {
   const confirmMsg = typeof getTranslation === 'function' ? getTranslation('confirm_disconnect', 'Disconnect this session?') : 'Disconnect this session?';
   if (!confirm(confirmMsg)) return;
-  showToast(`Disconnecting ${activeSession}...`, 'warning');
+  showToast(`Đang hủy liên kết tài khoản ${activeSession}...`, 'warning');
   try {
+    // 1. Logout WhatsApp session
     await fetch(`${API_BASE}/api/sessions/${activeSession}/logout`, {
       method: 'POST',
       headers: getAuthHeaders()
     });
-    showToast(`Session '${activeSession}' disconnected.`, 'info');
-    setTimeout(refreshAllData, 2000);
+
+    // 2. Also reset ChatbotX app configuration for this session so Step 3 is synchronized
+    const appId = getAppIdForSession(activeSession);
+    try {
+      await fetch(`${API_BASE}/api/apps/${appId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+    } catch (e) {
+      console.warn('App link cleanup on disconnect:', e);
+    }
+
+    showToast(`Đã hủy liên kết '${activeSession}' thành công.`, 'info');
+    
+    // 3. Immediately switch to QR tab and refresh UI & Step 3 token state
+    switchPairTab('qr');
+    await refreshAllData();
+    fetchQrCode();
   } catch (err) {
     showToast(`Error: ${err.message}`, 'error');
   }
