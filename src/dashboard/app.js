@@ -842,7 +842,7 @@ function showToast(message, type = 'info') {
 // 11. Core WAHA Version & GitHub Auto-Update Check
 const GITHUB_FORK_REPO = 'craybull/waha-chatbotx-dashboard';
 
-let currentWahaVersion = '2026.8.2';
+let currentWahaVersion = '2026.8.4';
 
 async function fetchLocalVersion() {
   const verDisplay = document.getElementById('currentVersionDisplay');
