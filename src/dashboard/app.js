@@ -142,55 +142,60 @@ function renderSessionsGrid(sessions) {
     
     let statusDotBg = 'bg-red-400';
     let statusText = typeof getTranslation === 'function' ? getTranslation('session_status_stopped', s.status || 'Offline') : (s.status || 'Offline');
-    let statusTextColor = 'text-red-400';
+    let statusBadgeClass = 'bg-red-500/10 text-red-400 border border-red-500/20';
 
     if (isOnline) {
       statusDotBg = 'bg-emerald-400';
       statusText = typeof getTranslation === 'function' ? getTranslation('session_status_working', 'Online') : 'Online';
-      statusTextColor = 'text-emerald-400';
+      statusBadgeClass = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
     } else if (isScanQr) {
       statusDotBg = 'bg-amber-400';
       statusText = typeof getTranslation === 'function' ? getTranslation('session_status_scan_qr', 'Scan QR') : 'Scan QR';
-      statusTextColor = 'text-amber-400';
+      statusBadgeClass = 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
     } else if (isStarting) {
       statusDotBg = 'bg-blue-400';
       statusText = typeof getTranslation === 'function' ? getTranslation('session_status_starting', 'Starting...') : 'Starting...';
-      statusTextColor = 'text-blue-400';
+      statusBadgeClass = 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
     }
 
-    const unlinkedText = typeof getTranslation === 'function' ? getTranslation('step2_status_inactive', 'Unlinked') : 'Unlinked';
+    const unlinkedText = typeof getTranslation === 'function' ? getTranslation('step3_status_inactive', 'Not Linked') : 'Not Linked';
     const phone = s.me?.id ? `+${s.me.id.split('@')[0]}` : unlinkedText;
     const pushName = s.me?.pushName || (isActive ? 'WhatsApp' : s.name);
 
     const card = document.createElement('div');
     card.onclick = () => switchActiveSession(s.name);
-    card.className = `p-3.5 rounded-2xl cursor-pointer transition-all duration-150 border text-left relative ${
+    card.className = `p-3.5 rounded-2xl cursor-pointer transition-all duration-150 border text-left relative group ${
       isActive
-        ? 'bg-blue-600/15 border-blue-500'
+        ? 'bg-blue-600/15 border-blue-500 shadow-md shadow-blue-500/10'
         : 'bg-[#0F172A] hover:bg-[#1E293B] border-white/5 hover:border-white/15'
     }`;
 
     card.innerHTML = `
-      <div class="flex items-start justify-between">
-        <div class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-xl ${
+      <div class="flex items-start justify-between gap-2">
+        <div class="flex items-center space-x-2.5 overflow-hidden">
+          <div class="w-9 h-9 rounded-xl ${
             isOnline ? 'bg-emerald-500/20 border border-emerald-500/30' : 'bg-slate-800 border border-white/5'
           } flex items-center justify-center p-1.5 flex-shrink-0">
             <img src="https://chatbotx.io/wp-content/themes/chatbotx-theme/assets/images/WhatsApp.svg" alt="WhatsApp" class="w-5 h-5 object-contain">
           </div>
           <div class="overflow-hidden">
             <div class="flex items-center space-x-1.5">
-              <h4 class="font-bold text-xs text-white truncate max-w-[110px]">${pushName}</h4>
-              ${isActive ? '<span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>' : ''}
+              <h4 class="font-bold text-xs text-white truncate max-w-[105px]">${pushName}</h4>
+              ${isActive ? '<span class="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0"></span>' : ''}
             </div>
-            <p class="text-[11px] text-gray-400 font-mono truncate max-w-[120px]">${phone}</p>
+            <p class="text-[11px] text-gray-400 font-mono truncate max-w-[115px]">${phone}</p>
           </div>
         </div>
-        <span class="w-2.5 h-2.5 rounded-full ${statusDotBg} flex-shrink-0 mt-1 inline-block"></span>
+        <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusBadgeClass} flex-shrink-0 mt-0.5">
+          <span class="w-1.5 h-1.5 rounded-full ${statusDotBg}"></span>
+          <span>${statusText}</span>
+        </span>
       </div>
-      <div class="mt-2 pt-2 border-t border-white/5 flex items-center justify-between text-[10px]">
-        <span class="text-gray-500 font-mono truncate max-w-[80px]">#${s.name}</span>
-        <span class="font-semibold ${statusTextColor}">${statusText}</span>
+      <div class="mt-2.5 pt-2 border-t border-white/5 flex items-center justify-between text-[11px]">
+        <span class="text-gray-500 font-mono">#${s.name}</span>
+        <button onclick="deleteSessionDirect(event, '${s.name}')" title="Delete Account" class="p-1 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer flex items-center justify-center">
+          <i class="ph-bold ph-trash text-xs"></i>
+        </button>
       </div>
     `;
 
@@ -732,15 +737,18 @@ async function logoutSession() {
   }
 }
 
-async function deleteActiveSession() {
-  if (!activeSession) return;
+async function deleteSessionDirect(event, sessionNameToDelete) {
+  if (event) event.stopPropagation();
+  if (!sessionNameToDelete) return;
 
-  const confirmMsg = typeof getTranslation === 'function' ? getTranslation('confirm_delete', 'Are you sure you want to delete this account?') : 'Are you sure you want to delete this account?';
+  const confirmMsg = typeof getTranslation === 'function' 
+    ? getTranslation('confirm_delete', 'Are you sure you want to delete this account?') 
+    : `Are you sure you want to delete account '${sessionNameToDelete}'?`;
   if (!confirm(confirmMsg)) return;
 
-  showToast(`Deleting session ${activeSession}...`, 'warning');
+  showToast(`Đang xóa tài khoản '${sessionNameToDelete}'...`, 'warning');
   try {
-    const res = await fetch(`${API_BASE}/api/sessions/${activeSession}`, {
+    const res = await fetch(`${API_BASE}/api/sessions/${sessionNameToDelete}`, {
       method: 'DELETE',
       headers: getAuthHeaders()
     });
@@ -750,13 +758,19 @@ async function deleteActiveSession() {
       throw new Error(errData.message || `HTTP ${res.status}`);
     }
 
-    showToast(`Session '${activeSession}' deleted.`, 'info');
-    activeSession = null;
-    await fetchSessionsList();
-    refreshAllData();
+    showToast(`Đã xóa tài khoản '${sessionNameToDelete}' thành công.`, 'success');
+    if (activeSession === sessionNameToDelete) {
+      activeSession = null;
+    }
+    await refreshAllData();
   } catch (err) {
-    showToast(`Error deleting account: ${err.message}`, 'error');
+    showToast(`Lỗi khi xóa tài khoản: ${err.message}`, 'error');
   }
+}
+
+async function deleteActiveSession() {
+  if (!activeSession) return;
+  await deleteSessionDirect(null, activeSession);
 }
 
 // 10. Toast Notifications
