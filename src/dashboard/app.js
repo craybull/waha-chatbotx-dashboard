@@ -213,10 +213,11 @@ function renderSessionsGrid(sessions) {
 function switchActiveSession(name) {
   if (activeSession === name) return;
   activeSession = name;
+  lastLoadedQrSession = null;
   switchPairTab('qr');
   showToast(`Đã chuyển sang quản lý: ${name}`, 'info');
   refreshAllData();
-  fetchQrCode();
+  fetchQrCode(true);
 }
 
 // 2. Fetch Active Session Status & Auto-Sync Name
@@ -404,13 +405,18 @@ function copyElementText(inputId, label = 'Information') {
 }
 
 // 4. QR Code Fetching for Active Session
-async function fetchQrCode() {
+let lastLoadedQrSession = null;
+
+async function fetchQrCode(forceShowSpinner = false) {
   const qrImg = document.getElementById('qrImageElement');
   const qrSpinner = document.getElementById('qrLoadingSpinner');
   if (!activeSession) return;
 
-  if (qrImg) qrImg.classList.add('hidden');
-  if (qrSpinner) qrSpinner.classList.remove('hidden');
+  const isSessionChanged = lastLoadedQrSession !== activeSession;
+  if (isSessionChanged || forceShowSpinner || !qrImg?.src || qrImg.classList.contains('hidden')) {
+    if (qrImg && (isSessionChanged || forceShowSpinner)) qrImg.classList.add('hidden');
+    if (qrSpinner && (isSessionChanged || forceShowSpinner || !qrImg?.src)) qrSpinner.classList.remove('hidden');
+  }
 
   try {
     const res = await fetch(`${API_BASE}/api/${activeSession}/auth/qr?format=image&t=${Date.now()}`, {
@@ -424,9 +430,17 @@ async function fetchQrCode() {
         qrImg.classList.remove('hidden');
       }
       if (qrSpinner) qrSpinner.classList.add('hidden');
+      lastLoadedQrSession = activeSession;
+    } else {
+      // If QR not ready yet (e.g. WhatsApp engine is starting up), fast retry in 1.5s
+      if (currentPairTab === 'qr') {
+        setTimeout(() => {
+          if (activeSession) fetchQrCode(false);
+        }, 1500);
+      }
     }
   } catch (err) {
-    console.error('Failed to load QR code:', err);
+    console.warn('Failed to load QR code:', err);
   }
 }
 
@@ -700,9 +714,10 @@ async function submitNewSession(event) {
     closeNewSessionModal();
     showToast(`Session '${name}' initialized successfully!`, 'success');
     activeSession = name;
+    lastLoadedQrSession = null;
     switchPairTab('qr');
     await refreshAllData();
-    fetchQrCode();
+    fetchQrCode(true);
   } catch (err) {
     showToast(`Error creating account: ${err.message}`, 'error');
   } finally {
@@ -753,9 +768,10 @@ async function logoutSession() {
     showToast(`Đã hủy liên kết '${activeSession}' thành công.`, 'info');
     
     // 3. Immediately switch to QR tab and refresh UI & Step 3 token state
+    lastLoadedQrSession = null;
     switchPairTab('qr');
     await refreshAllData();
-    fetchQrCode();
+    fetchQrCode(true);
   } catch (err) {
     showToast(`Error: ${err.message}`, 'error');
   }
