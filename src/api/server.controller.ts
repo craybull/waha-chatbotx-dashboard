@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import * as process from 'node:process';
 
 import {
@@ -88,6 +90,50 @@ export class ServerController {
         id: this.config.workerId,
       },
     };
+  }
+
+  @Post('update-dashboard')
+  @ApiOperation({
+    summary: 'Hot-update dashboard static files from GitHub repository',
+  })
+  @CheckPolicies(CanServer(Action.Retrieve))
+  async updateDashboard(
+    @Body() body: { tag?: string },
+  ): Promise<{ success: boolean; message: string; version: string }> {
+    const tag = body?.tag || 'main';
+    const cleanTag = tag.startsWith('v') ? tag : (tag === 'main' ? 'main' : `v${tag}`);
+    const rawBase = `https://raw.githubusercontent.com/craybull/waha-chatbotx-dashboard/${cleanTag}/src/dashboard`;
+
+    const files = ['index.html', 'app.js', 'i18n.js', 'style.css'];
+    const targetDirs = [
+      path.resolve(process.cwd(), 'dist', 'dashboard'),
+      path.resolve(process.cwd(), 'src', 'dashboard'),
+    ];
+
+    try {
+      for (const file of files) {
+        const fileUrl = `${rawBase}/${file}?t=${Date.now()}`;
+        const res = await fetch(fileUrl);
+        if (!res.ok) {
+          throw new Error(`Failed to download ${file} from GitHub (HTTP ${res.status})`);
+        }
+        const content = await res.text();
+        for (const dir of targetDirs) {
+          if (fs.existsSync(dir)) {
+            fs.writeFileSync(path.join(dir, file), content, 'utf8');
+          }
+        }
+      }
+      this.logger.log(`Dashboard hot-updated successfully to ${cleanTag}`);
+      return {
+        success: true,
+        version: cleanTag,
+        message: `Dashboard hot-updated successfully to ${cleanTag}`,
+      };
+    } catch (err: any) {
+      this.logger.error(`Error updating dashboard: ${err.message}`);
+      throw new Error(`Update failed: ${err.message}`);
+    }
   }
 
   @Post('stop')

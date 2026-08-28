@@ -534,6 +534,70 @@
     </div>
   </div>
 
+  <!-- MODAL: UPDATE DASHBOARD CONFIRMATION -->
+  <div id="updateModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="glass-card max-w-lg w-full p-6 space-y-5 animate-fade-in border-amber-500/30 shadow-2xl">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div class="flex items-center space-x-2.5">
+          <div class="p-2 rounded-xl bg-amber-500/10 text-amber-400">
+            <i class="ph-bold ph-arrow-circle-up text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white" data-i18n="modal_update_title">Update Dashboard</h3>
+            <p class="text-xs text-gray-400" data-i18n="modal_update_subtitle">A new version is ready to install</p>
+          </div>
+        </div>
+        <button onclick="closeUpdateModal()" class="p-1 rounded-lg text-gray-400 hover:text-white transition cursor-pointer">
+          <i class="ph ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3.5">
+        <!-- Version Compare Box -->
+        <div class="p-4 rounded-2xl bg-[#0B1120] border border-white/10 flex items-center justify-between">
+          <div>
+            <span class="text-[10px] uppercase tracking-wider text-gray-500 font-semibold" data-i18n="modal_update_current">Current Version</span>
+            <div id="modalCurrentVer" class="text-sm font-mono font-bold text-gray-300">v2026.8.1</div>
+          </div>
+          <div class="p-2 rounded-full bg-amber-500/10 text-amber-400 text-sm">
+            <i class="ph-bold ph-arrow-right"></i>
+          </div>
+          <div>
+            <span class="text-[10px] uppercase tracking-wider text-amber-400 font-semibold" data-i18n="modal_update_target">New Version</span>
+            <div id="modalTargetVer" class="text-sm font-mono font-bold text-emerald-400">v2026.8.2</div>
+          </div>
+        </div>
+
+        <!-- Release Notes Summary -->
+        <div class="p-4 rounded-2xl bg-[#0F172A] border border-white/5 space-y-1.5">
+          <span class="text-xs font-semibold text-gray-300 flex items-center space-x-1.5">
+            <i class="ph ph-sparkle text-amber-400"></i>
+            <span data-i18n="modal_update_notes_title">Release Notes:</span>
+          </span>
+          <div id="modalReleaseNotes" class="text-xs text-gray-400 font-sans leading-relaxed max-h-36 overflow-y-auto whitespace-pre-line pr-1">
+            Loading notes...
+          </div>
+        </div>
+
+        <p class="text-[11px] text-gray-500 italic text-center" data-i18n="modal_update_hint">
+          Update completes in ~2 seconds. Existing WhatsApp accounts and session data remain untouched.
+        </p>
+      </div>
+
+      <div class="flex justify-end space-x-2 pt-2 border-t border-white/5">
+        <button type="button" onclick="closeUpdateModal()" class="px-4 py-2.5 rounded-full bg-[#1F2937] hover:bg-[#374151] text-xs font-semibold text-gray-300 transition cursor-pointer">
+          <span data-i18n="modal_add_btn_cancel">Cancel</span>
+        </button>
+        <button type="button" id="btnPerformUpdate" onclick="performDashboardUpdate()" class="px-6 py-2.5 rounded-full brand-btn-gradient text-xs font-bold text-white flex items-center space-x-1.5 cursor-pointer shadow-lg">
+          <i id="performUpdateIcon" class="ph-bold ph-rocket-launch"></i>
+          <span id="btnPerformUpdateText" data-i18n="modal_update_btn_apply">🚀 Update Now</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- TOAST NOTIFICATION CONTAINER -->
   <div id="toastContainer" class="fixed bottom-6 right-6 z-50 space-y-3 pointer-events-none"></div>
 

@@ -141,6 +141,15 @@ const TRANSLATIONS = {
     modal_add_btn_create: "Create & Connect",
     modal_add_btn_cancel: "Cancel",
 
+    // Modal: Update Dashboard
+    modal_update_title: "Update Dashboard",
+    modal_update_subtitle: "A new version is ready to install",
+    modal_update_current: "Current Version",
+    modal_update_target: "New Version",
+    modal_update_notes_title: "Release Notes:",
+    modal_update_hint: "Update completes in ~2 seconds. Existing WhatsApp accounts and session data remain untouched.",
+    modal_update_btn_apply: "🚀 Update Now",
+
     // Empty State
     empty_no_accounts_title: "No WhatsApp Accounts Yet",
     empty_no_accounts_desc: "Click the '+ Add Account' button at the top to create your first WhatsApp connection.",
@@ -281,6 +290,15 @@ const TRANSLATIONS = {
     modal_add_hint: "Để trống để tự động tạo theo thứ tự (account_2, account_3...).",
     modal_add_btn_create: "Tạo & Kết nối",
     modal_add_btn_cancel: "Hủy",
+
+    // Modal: Update Dashboard
+    modal_update_title: "Cập nhật Dashboard",
+    modal_update_subtitle: "Phiên bản mới đã sẵn sàng để nâng cấp",
+    modal_update_current: "Phiên bản hiện tại",
+    modal_update_target: "Phiên bản mới",
+    modal_update_notes_title: "Nội dung cập nhật:",
+    modal_update_hint: "Quá trình cập nhật hoàn tất trong ~2 giây. Dữ liệu tài khoản WhatsApp và kênh liên kết được giữ nguyên 100%.",
+    modal_update_btn_apply: "🚀 Cập nhật ngay",
 
     // Empty State
     empty_no_accounts_title: "Chưa có tài khoản WhatsApp nào",

@@ -775,6 +775,77 @@ async function fetchLocalVersion() {
   }
 }
 
+let pendingUpdateTag = '';
+let pendingReleaseData = null;
+
+function openUpdateModal(tag, releaseData) {
+  pendingUpdateTag = tag;
+  pendingReleaseData = releaseData;
+
+  const modal = document.getElementById('updateModal');
+  const currentVerEl = document.getElementById('modalCurrentVer');
+  const targetVerEl = document.getElementById('modalTargetVer');
+  const notesEl = document.getElementById('modalReleaseNotes');
+
+  if (currentVerEl) currentVerEl.textContent = `v${currentWahaVersion.replace(/^v/, '')}`;
+  if (targetVerEl) targetVerEl.textContent = `v${tag.replace(/^v/, '')}`;
+
+  if (notesEl) {
+    if (releaseData && releaseData.body) {
+      let bodyText = releaseData.body.replace(/%0A/g, '\n');
+      notesEl.textContent = bodyText;
+    } else {
+      notesEl.textContent = `• Nâng cấp giao diện và tối ưu hóa hệ thống v${tag}.\n• Khắc phục các lỗi hiển thị và cải tiến trải nghiệm.`;
+    }
+  }
+
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeUpdateModal() {
+  const modal = document.getElementById('updateModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+async function performDashboardUpdate() {
+  const btn = document.getElementById('btnPerformUpdate');
+  const icon = document.getElementById('performUpdateIcon');
+  const text = document.getElementById('btnPerformUpdateText');
+  if (!btn) return;
+
+  btn.disabled = true;
+  if (icon) icon.className = 'ph-bold ph-spinner animate-spin';
+  if (text) text.textContent = typeof getTranslation === 'function' ? getTranslation('common_loading', 'Updating...') : 'Updating...';
+
+  showToast('Đang tải và cài đặt gói cập nhật mới từ GitHub...', 'info');
+
+  try {
+    const res = await fetch(`${API_BASE}/api/server/update-dashboard`, {
+      method: 'POST',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ tag: pendingUpdateTag || 'main' })
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || `HTTP ${res.status}`);
+    }
+
+    showToast('Cập nhật Dashboard thành công! Đang làm mới trang...', 'success');
+    closeUpdateModal();
+
+    setTimeout(() => {
+      window.location.reload(true);
+    }, 1500);
+
+  } catch (err) {
+    showToast(`Lỗi cập nhật: ${err.message}`, 'error');
+    btn.disabled = false;
+    if (icon) icon.className = 'ph-bold ph-rocket-launch';
+    if (text) text.textContent = '🚀 Thử lại';
+  }
+}
+
 async function checkForWahaUpdates() {
   const btn = document.getElementById('btnCheckUpdate');
   const icon = document.getElementById('updateCheckIcon');
@@ -789,7 +860,7 @@ async function checkForWahaUpdates() {
 
   try {
     let latestTag = '';
-    let releaseUrl = `https://github.com/${GITHUB_FORK_REPO}/releases`;
+    let latestReleaseData = null;
 
     // 1. Try fetching latest release from user's fork
     try {
@@ -798,7 +869,7 @@ async function checkForWahaUpdates() {
         const relData = await relRes.json();
         if (relData && relData.tag_name) {
           latestTag = relData.tag_name.replace(/^v/, '');
-          if (relData.html_url) releaseUrl = relData.html_url;
+          latestReleaseData = relData;
         }
       }
     } catch (e) {
@@ -813,7 +884,6 @@ async function checkForWahaUpdates() {
           const tags = await tagRes.json();
           if (Array.isArray(tags) && tags.length > 0 && tags[0].name) {
             latestTag = tags[0].name.replace(/^v/, '');
-            releaseUrl = `https://github.com/${GITHUB_FORK_REPO}/releases/tag/v${latestTag}`;
           }
         }
       } catch (e) {
@@ -827,18 +897,18 @@ async function checkForWahaUpdates() {
       if (upRes.ok) {
         const upData = await upRes.json();
         latestTag = upData.tag_name ? upData.tag_name.replace(/^v/, '') : '';
-        if (upData.html_url) releaseUrl = upData.html_url;
+        latestReleaseData = upData;
       }
     }
 
     const cleanCurrent = currentWahaVersion.replace(/^v/, '');
 
     if (latestTag && latestTag !== cleanCurrent) {
-      // New version available
+      // New version available -> Open Update Confirmation Modal!
       if (text) text.textContent = `New: v${latestTag} 🎉`;
       if (icon) icon.className = 'ph-bold ph-arrow-circle-up text-xs text-amber-400';
-      btn.className = 'flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-xs font-semibold text-amber-300 border border-amber-500/30 transition cursor-pointer';
-      btn.onclick = () => window.open(releaseUrl, '_blank');
+      btn.className = 'flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-xs font-semibold text-amber-300 border border-amber-500/30 transition cursor-pointer shadow-sm';
+      btn.onclick = () => openUpdateModal(latestTag, latestReleaseData);
       showToast(typeof getTranslation === 'function' ? getTranslation('toast_update_available', `New version v${latestTag} is available on GitHub!`) : `New version v${latestTag} is available on GitHub!`, 'info');
     } else {
       // Up to date
