@@ -22,6 +22,10 @@ services:
       - CHATBOTX_API_URL=https://app.chatbotx.io/api
       - CHATBOTX_API_TOKEN=${CHATBOTX_API_TOKEN:-}
       - CHATBOTX_MEDIA_BASE_URL=${CHATBOTX_MEDIA_BASE_URL:-}
+      - WAHA_DASHBOARD_USERNAME=admin
+      - WAHA_DASHBOARD_PASSWORD=Abcd@1234
+      - WHATSAPP_SWAGGER_USERNAME=admin
+      - WHATSAPP_SWAGGER_PASSWORD=Abcd@1234
     volumes:
       - ./sessions:/app/.sessions
       - ./media:/app/.media
