@@ -193,9 +193,16 @@ function renderSessionsGrid(sessions) {
       </div>
       <div class="mt-2.5 pt-2 border-t border-white/5 flex items-center justify-between text-[11px]">
         <span class="text-gray-500 font-mono">#${s.name}</span>
-        <button onclick="deleteSessionDirect(event, '${s.name}')" title="Delete Account" class="p-1 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer flex items-center justify-center">
-          <i class="ph-bold ph-trash text-xs"></i>
-        </button>
+        ${
+          !isOnline
+            ? `<button onclick="deleteSessionDirect(event, '${s.name}')" title="Delete Account" class="p-1 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer flex items-center justify-center">
+                <i class="ph-bold ph-trash text-xs"></i>
+              </button>`
+            : `<span class="text-[10px] text-emerald-400/80 font-mono flex items-center space-x-1" title="Connected Online">
+                <i class="ph ph-shield-check text-xs text-emerald-400"></i>
+                <span>Active</span>
+              </span>`
+        }
       </div>
     `;
 
@@ -740,6 +747,13 @@ async function logoutSession() {
 async function deleteSessionDirect(event, sessionNameToDelete) {
   if (event) event.stopPropagation();
   if (!sessionNameToDelete) return;
+
+  const targetSession = allSessions.find((s) => s.name === sessionNameToDelete);
+  const isOnline = targetSession && (targetSession.status === 'WORKING' || targetSession.status === 'CONNECTED' || (targetSession.engine && targetSession.engine.state === 'CONNECTED'));
+  if (isOnline) {
+    showToast('Không thể xóa tài khoản khi đang Online. Vui lòng Disconnect trước.', 'warning');
+    return;
+  }
 
   const confirmMsg = typeof getTranslation === 'function' 
     ? getTranslation('confirm_delete', 'Are you sure you want to delete this account?') 
