@@ -17,7 +17,8 @@ services:
       - WAHA_LOG_FORMAT=pretty
       - WAHA_LOG_LEVEL=debug
       - WAHA_ZIP_LOGS=false
-      - WAHA_APPS_ENABLED=chatbotx
+      - WAHA_APPS_ENABLED=true
+      - WAHA_APPS_ON=chatbotx
       - CHATBOTX_API_URL=https://app.chatbotx.io/api
       - CHATBOTX_API_TOKEN=${CHATBOTX_API_TOKEN:-}
       - CHATBOTX_MEDIA_BASE_URL=${CHATBOTX_MEDIA_BASE_URL:-}
