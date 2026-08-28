@@ -248,6 +248,7 @@ function updateStatusUI(status, data) {
   const btnRestart = document.getElementById('btnRestartSession');
   const btnDisconnect = document.getElementById('btnDisconnectSession');
   const btnDelete = document.getElementById('btnDeleteSession');
+  const testSection = document.getElementById('testMessageSection');
 
   // Handle EMPTY / NO ACCOUNTS STATE
   if (!activeSession || allSessions.length === 0) {
@@ -269,6 +270,7 @@ function updateStatusUI(status, data) {
     if (btnRestart) btnRestart.classList.add('hidden');
     if (btnDisconnect) btnDisconnect.classList.add('hidden');
     if (btnDelete) btnDelete.classList.add('hidden');
+    if (testSection) testSection.classList.add('hidden');
     return;
   }
 
@@ -304,10 +306,11 @@ function updateStatusUI(status, data) {
     if (tabsEl) tabsEl.classList.add('hidden');
 
     // Button Visibility for CONNECTED state:
-    // Show Restart & Disconnect; HIDE Delete
+    // Show Restart & Disconnect; HIDE Delete; SHOW Test Message Section
     if (btnRestart) btnRestart.classList.remove('hidden');
     if (btnDisconnect) btnDisconnect.classList.remove('hidden');
     if (btnDelete) btnDelete.classList.add('hidden');
+    if (testSection) testSection.classList.remove('hidden');
 
   } else if (status === 'SCAN_QR_CODE') {
     nameEl.textContent = typeof getTranslation === 'function' ? getTranslation('session_status_scan_qr', 'Scan QR Code') : 'Scan QR Code';
@@ -329,10 +332,11 @@ function updateStatusUI(status, data) {
     }
 
     // Button Visibility for SCAN_QR state (Not yet connected):
-    // HIDE Disconnect; SHOW Restart; ALWAYS SHOW Delete
+    // HIDE Disconnect; SHOW Restart; ALWAYS SHOW Delete; HIDE Test Message
     if (btnDisconnect) btnDisconnect.classList.add('hidden');
     if (btnRestart) btnRestart.classList.remove('hidden');
     if (btnDelete) btnDelete.classList.remove('hidden');
+    if (testSection) testSection.classList.add('hidden');
 
   } else {
     nameEl.textContent = typeof getTranslation === 'function' ? getTranslation('step2_status_inactive', 'Unlinked') : 'Unlinked';
@@ -354,10 +358,11 @@ function updateStatusUI(status, data) {
     }
 
     // Button Visibility for STOPPED / UNLINKED state:
-    // HIDE Disconnect; SHOW Restart; ALWAYS SHOW Delete
+    // HIDE Disconnect; SHOW Restart; ALWAYS SHOW Delete; HIDE Test Message
     if (btnDisconnect) btnDisconnect.classList.add('hidden');
     if (btnRestart) btnRestart.classList.remove('hidden');
     if (btnDelete) btnDelete.classList.remove('hidden');
+    if (testSection) testSection.classList.add('hidden');
   }
 }
 
