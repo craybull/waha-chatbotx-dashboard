@@ -331,8 +331,8 @@ function updateStatusUI(status, data) {
       fetchSessionsList(true);
     }
 
-    // Normal polling (4s) when already online
-    setAdaptivePolling(4000);
+    // 5-minute interval when online (lightweight & resource-saving)
+    setAdaptivePolling(5 * 60 * 1000);
 
     if (nameEl) nameEl.textContent = pushName || 'WhatsApp Connected';
     if (phoneEl) phoneEl.textContent = phone || '--';
