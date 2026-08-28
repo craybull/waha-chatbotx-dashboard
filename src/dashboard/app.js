@@ -73,13 +73,17 @@ async function refreshAllData() {
   const refreshIcon = document.getElementById('refreshIcon');
   if (refreshIcon) refreshIcon.classList.add('animate-spin');
 
+  await fetchSessionsList();
   updateContextDisplays();
 
-  await Promise.all([
-    fetchSessionsList(),
-    fetchSessionStatus(activeSession),
-    loadChatbotxConfig()
-  ]);
+  if (activeSession) {
+    await Promise.all([
+      fetchSessionStatus(activeSession),
+      loadChatbotxConfig()
+    ]);
+  } else {
+    updateStatusUI('NO_ACCOUNT', null);
+  }
 
   setTimeout(() => {
     if (refreshIcon) refreshIcon.classList.remove('animate-spin');
@@ -197,8 +201,10 @@ function renderSessionsGrid(sessions) {
 function switchActiveSession(name) {
   if (activeSession === name) return;
   activeSession = name;
+  switchPairTab('qr');
   showToast(`Đã chuyển sang quản lý: ${name}`, 'info');
   refreshAllData();
+  fetchQrCode();
 }
 
 // 2. Fetch Active Session Status & Auto-Sync Name
@@ -389,6 +395,10 @@ function copyElementText(inputId, label = 'Information') {
 async function fetchQrCode() {
   const qrImg = document.getElementById('qrImageElement');
   const qrSpinner = document.getElementById('qrLoadingSpinner');
+  if (!activeSession) return;
+
+  if (qrImg) qrImg.classList.add('hidden');
+  if (qrSpinner) qrSpinner.classList.remove('hidden');
 
   try {
     const res = await fetch(`${API_BASE}/api/${activeSession}/auth/qr?format=image&t=${Date.now()}`, {
@@ -678,7 +688,9 @@ async function submitNewSession(event) {
     closeNewSessionModal();
     showToast(`Session '${name}' initialized successfully!`, 'success');
     activeSession = name;
-    refreshAllData();
+    switchPairTab('qr');
+    await refreshAllData();
+    fetchQrCode();
   } catch (err) {
     showToast(`Error creating account: ${err.message}`, 'error');
   } finally {
