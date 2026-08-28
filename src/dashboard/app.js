@@ -19,6 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchLocalVersion();
   refreshAllData();
 
+  // Auto check for updates once after load
+  setTimeout(() => {
+    checkForWahaUpdates(true);
+  }, 1000);
+
   // Poll sessions and active status every 5 seconds
   pollingTimer = setInterval(() => {
     fetchSessionsList(true);
@@ -760,21 +765,9 @@ const GITHUB_FORK_REPO = 'craybull/waha-chatbotx-dashboard';
 let currentWahaVersion = '2026.8.3';
 
 async function fetchLocalVersion() {
-  try {
-    const res = await fetch(`${API_BASE}/api/version`, { headers: getAuthHeaders() });
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.version) {
-        if (data.version >= currentWahaVersion) {
-          currentWahaVersion = data.version;
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('Could not fetch server version:', err);
-  } finally {
-    const verDisplay = document.getElementById('currentVersionDisplay');
-    if (verDisplay) verDisplay.textContent = `v${currentWahaVersion.replace(/^v/, '')}`;
+  const verDisplay = document.getElementById('currentVersionDisplay');
+  if (verDisplay) {
+    verDisplay.textContent = `v${currentWahaVersion.replace(/^v/, '')}`;
   }
 }
 
@@ -849,7 +842,7 @@ async function performDashboardUpdate() {
   }
 }
 
-async function checkForWahaUpdates() {
+async function checkForWahaUpdates(silent = false) {
   const btn = document.getElementById('btnCheckUpdate');
   const icon = document.getElementById('updateCheckIcon');
   const text = document.getElementById('updateCheckText');
@@ -914,18 +907,24 @@ async function checkForWahaUpdates() {
       if (icon) icon.className = 'ph-bold ph-arrow-circle-up text-xs text-amber-400';
       btn.className = 'flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-xs font-semibold text-amber-300 border border-amber-500/30 transition cursor-pointer shadow-sm';
       btn.onclick = () => openUpdateModal(latestTag, latestReleaseData);
-      showToast(typeof getTranslation === 'function' ? getTranslation('toast_update_available', `New version v${latestTag} is available on GitHub!`) : `New version v${latestTag} is available on GitHub!`, 'info');
+      if (!silent) {
+        showToast(typeof getTranslation === 'function' ? getTranslation('toast_update_available', `New version v${latestTag} is available on GitHub!`) : `New version v${latestTag} is available on GitHub!`, 'info');
+      }
     } else {
       // Up to date
       if (text) text.textContent = typeof getTranslation === 'function' ? getTranslation('footer_up_to_date', 'Up to date ✓') : 'Up to date ✓';
       if (icon) icon.className = 'ph-bold ph-check text-xs text-emerald-400';
       btn.className = 'flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-emerald-500/10 text-xs font-semibold text-emerald-400 border border-emerald-500/20 cursor-default';
-      showToast(typeof getTranslation === 'function' ? getTranslation('toast_up_to_date', 'WAHA is up to date!') : 'WAHA is up to date!', 'success');
+      if (!silent) {
+        showToast(typeof getTranslation === 'function' ? getTranslation('toast_up_to_date', 'WAHA is up to date!') : 'WAHA is up to date!', 'success');
+      }
     }
   } catch (err) {
     if (text) text.textContent = typeof getTranslation === 'function' ? getTranslation('footer_check_update', 'Check Update') : 'Check Update';
     if (icon) icon.className = 'ph-bold ph-git-pull-request text-xs text-gray-400';
-    showToast(`GitHub check: ${err.message}`, 'warning');
+    if (!silent) {
+      showToast(`GitHub check: ${err.message}`, 'warning');
+    }
   } finally {
     btn.disabled = false;
   }
