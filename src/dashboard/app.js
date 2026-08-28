@@ -757,7 +757,7 @@ function showToast(message, type = 'info') {
 // 11. Check GitHub Version Updates for Fork
 const GITHUB_FORK_REPO = 'craybull/waha-chatbotx-dashboard';
 
-let currentWahaVersion = '2026.8.1';
+let currentWahaVersion = '2026.8.2';
 
 async function fetchLocalVersion() {
   try {
@@ -788,18 +788,49 @@ async function checkForWahaUpdates() {
   if (text) text.textContent = typeof getTranslation === 'function' ? getTranslation('footer_checking_update', 'Checking...') : 'Checking...';
 
   try {
-    // Check user's fork repository releases first
-    let res = await fetch(`https://api.github.com/repos/${GITHUB_FORK_REPO}/releases/latest`);
-    
-    // If not found yet on fork, fallback to checking upstream
-    if (!res.ok) {
-      res = await fetch('https://api.github.com/repos/devlikeapro/waha/releases/latest');
+    let latestTag = '';
+    let releaseUrl = `https://github.com/${GITHUB_FORK_REPO}/releases`;
+
+    // 1. Try fetching latest release from user's fork
+    try {
+      const relRes = await fetch(`https://api.github.com/repos/${GITHUB_FORK_REPO}/releases/latest`);
+      if (relRes.ok) {
+        const relData = await relRes.json();
+        if (relData && relData.tag_name) {
+          latestTag = relData.tag_name.replace(/^v/, '');
+          if (relData.html_url) releaseUrl = relData.html_url;
+        }
+      }
+    } catch (e) {
+      console.warn('Release fetch error:', e);
     }
 
-    if (!res.ok) throw new Error(`GitHub API HTTP ${res.status}`);
+    // 2. If no GitHub release, check repository tags
+    if (!latestTag) {
+      try {
+        const tagRes = await fetch(`https://api.github.com/repos/${GITHUB_FORK_REPO}/tags`);
+        if (tagRes.ok) {
+          const tags = await tagRes.json();
+          if (Array.isArray(tags) && tags.length > 0 && tags[0].name) {
+            latestTag = tags[0].name.replace(/^v/, '');
+            releaseUrl = `https://github.com/${GITHUB_FORK_REPO}/releases/tag/v${latestTag}`;
+          }
+        }
+      } catch (e) {
+        console.warn('Tags fetch error:', e);
+      }
+    }
 
-    const data = await res.json();
-    const latestTag = data.tag_name ? data.tag_name.replace(/^v/, '') : '';
+    // 3. Fallback to upstream if fork has no tags/releases
+    if (!latestTag) {
+      const upRes = await fetch('https://api.github.com/repos/devlikeapro/waha/releases/latest');
+      if (upRes.ok) {
+        const upData = await upRes.json();
+        latestTag = upData.tag_name ? upData.tag_name.replace(/^v/, '') : '';
+        if (upData.html_url) releaseUrl = upData.html_url;
+      }
+    }
+
     const cleanCurrent = currentWahaVersion.replace(/^v/, '');
 
     if (latestTag && latestTag !== cleanCurrent) {
@@ -807,7 +838,7 @@ async function checkForWahaUpdates() {
       if (text) text.textContent = `New: v${latestTag} 🎉`;
       if (icon) icon.className = 'ph-bold ph-arrow-circle-up text-xs text-amber-400';
       btn.className = 'flex items-center space-x-1.5 px-3.5 py-1 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-xs font-semibold text-amber-300 border border-amber-500/30 transition cursor-pointer';
-      btn.onclick = () => window.open(data.html_url || `https://github.com/${GITHUB_FORK_REPO}/releases`, '_blank');
+      btn.onclick = () => window.open(releaseUrl, '_blank');
       showToast(typeof getTranslation === 'function' ? getTranslation('toast_update_available', `New version v${latestTag} is available on GitHub!`) : `New version v${latestTag} is available on GitHub!`, 'info');
     } else {
       // Up to date
