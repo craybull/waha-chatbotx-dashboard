@@ -308,11 +308,13 @@ function updateStatusUI(status, data) {
   const isOnline = status === 'WORKING' || status === 'CONNECTED' || (data?.engine && data.engine.state === 'CONNECTED');
 
   if (isOnline) {
-    nameEl.textContent = pushName || 'WhatsApp Connected';
-    phoneEl.textContent = phone || '--';
+    if (nameEl) nameEl.textContent = pushName || 'WhatsApp Connected';
+    if (phoneEl) phoneEl.textContent = phone || '--';
     
-    statePill.textContent = typeof getTranslation === 'function' ? getTranslation('common_online', 'ONLINE') : 'ONLINE';
-    statePill.className = 'px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold';
+    if (statePill) {
+      statePill.textContent = typeof getTranslation === 'function' ? getTranslation('common_online', 'ONLINE') : 'ONLINE';
+      statePill.className = 'px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold';
+    }
 
     if (engineEl) engineEl.textContent = data?.engine?.engine || 'WEBJS';
 
@@ -337,11 +339,13 @@ function updateStatusUI(status, data) {
     if (testSection) testSection.classList.remove('hidden');
 
   } else if (status === 'SCAN_QR_CODE') {
-    nameEl.textContent = typeof getTranslation === 'function' ? getTranslation('session_status_scan_qr', 'Scan QR Code') : 'Scan QR Code';
-    phoneEl.textContent = typeof getTranslation === 'function' ? getTranslation('step3_desc', 'Scan QR or use Pairing Code') : 'Scan QR or use Pairing Code';
+    if (nameEl) nameEl.textContent = typeof getTranslation === 'function' ? getTranslation('session_status_scan_qr', 'Scan QR Code') : 'Scan QR Code';
+    if (phoneEl) phoneEl.textContent = typeof getTranslation === 'function' ? getTranslation('step3_desc', 'Scan QR or use Pairing Code') : 'Scan QR or use Pairing Code';
     
-    statePill.textContent = 'SCAN_QR';
-    statePill.className = 'px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-semibold';
+    if (statePill) {
+      statePill.textContent = 'SCAN_QR';
+      statePill.className = 'px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-semibold';
+    }
 
     if (suggestedNameInput) suggestedNameInput.value = `WhatsApp ${activeSession}`;
 
@@ -363,11 +367,13 @@ function updateStatusUI(status, data) {
     if (testSection) testSection.classList.add('hidden');
 
   } else {
-    nameEl.textContent = typeof getTranslation === 'function' ? getTranslation('step2_status_inactive', 'Unlinked') : 'Unlinked';
-    phoneEl.textContent = '--';
+    if (nameEl) nameEl.textContent = typeof getTranslation === 'function' ? getTranslation('step2_status_inactive', 'Unlinked') : 'Unlinked';
+    if (phoneEl) phoneEl.textContent = '--';
     
-    statePill.textContent = status || 'STOPPED';
-    statePill.className = 'px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-400 font-semibold';
+    if (statePill) {
+      statePill.textContent = status || 'STOPPED';
+      statePill.className = 'px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-400 font-semibold';
+    }
 
     if (suggestedNameInput) suggestedNameInput.value = `WhatsApp ${activeSession}`;
 
