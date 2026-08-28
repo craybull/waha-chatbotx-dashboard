@@ -141,6 +141,10 @@ const TRANSLATIONS = {
     modal_add_btn_create: "Create & Connect",
     modal_add_btn_cancel: "Cancel",
 
+    // Empty State
+    empty_no_accounts_title: "No WhatsApp Accounts Yet",
+    empty_no_accounts_desc: "Click the '+ Add Account' button at the top to create your first WhatsApp connection.",
+
     // Footer
     footer_text: "Multi-Account Enterprise Edition",
     footer_version: "Version:",
@@ -274,9 +278,13 @@ const TRANSLATIONS = {
     modal_add_subtitle: "Hệ thống sẽ tự động nhận diện tên khi bạn kết nối",
     modal_add_label: "Mã định danh (hoặc để mặc định tự sinh):",
     modal_add_placeholder: "ví dụ: so_02, hotline_hcm, cskh",
-    modal_add_hint: "Để trống hệ thống sẽ tự động đặt tên theo thứ tự (account_2, account_3...).",
-    modal_add_btn_create: "Tạo & Kết nối ngay",
+    modal_add_hint: "Để trống để tự động tạo theo thứ tự (account_2, account_3...).",
+    modal_add_btn_create: "Tạo & Kết nối",
     modal_add_btn_cancel: "Hủy",
+
+    // Empty State
+    empty_no_accounts_title: "Chưa có tài khoản WhatsApp nào",
+    empty_no_accounts_desc: "Nhấn nút '+ Add Account' ở trên cùng để thêm tài khoản WhatsApp đầu tiên của bạn.",
 
     // Footer
     footer_text: "Phiên bản Doanh nghiệp Đa Tài khoản",

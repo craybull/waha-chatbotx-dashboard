@@ -13,6 +13,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "start:local": "node -e \"process.env.PORT='3008'; process.env.WAHA_NO_API_KEY='true'; process.env.WAHA_APPS_ENABLED='true'; process.env.WAHA_APPS_ON='chatbotx'; require('./dist/main');\"",
     "start:prod-exit": "node dist/main",
     "lint": "oxlint --deny-warnings",
     "lint-fix": "oxlint --fix --deny-warnings",

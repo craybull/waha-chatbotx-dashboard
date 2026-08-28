@@ -93,9 +93,12 @@ async function fetchSessionsList(silent = false) {
     const sessions = await res.json();
     allSessions = Array.isArray(sessions) ? sessions : [];
 
-    // Ensure default session exists in list if empty
-    if (allSessions.length === 0) {
-      allSessions = [{ name: 'default', status: 'STOPPED' }];
+    if (allSessions.length > 0) {
+      if (!activeSession || !allSessions.find((s) => s.name === activeSession)) {
+        activeSession = allSessions[0].name;
+      }
+    } else {
+      activeSession = null;
     }
 
     renderSessionsGrid(allSessions);
@@ -111,6 +114,16 @@ function renderSessionsGrid(sessions) {
   if (!grid) return;
 
   grid.innerHTML = '';
+
+  if (sessions.length === 0) {
+    const emptyDesc = typeof getTranslation === 'function' ? getTranslation('empty_no_accounts_desc', 'Click the "+ Add Account" button at the top to create your first WhatsApp connection.') : 'Click the "+ Add Account" button at the top to create your first WhatsApp connection.';
+    grid.innerHTML = `
+      <div class="col-span-full py-5 px-4 rounded-2xl bg-[#0F172A] border border-dashed border-white/10 text-center space-y-1">
+        <p class="text-xs text-gray-400 font-medium">${emptyDesc}</p>
+      </div>
+    `;
+    return;
+  }
 
   sessions.forEach((s) => {
     const isActive = s.name === activeSession;
@@ -185,6 +198,11 @@ function switchActiveSession(name) {
 
 // 2. Fetch Active Session Status & Auto-Sync Name
 async function fetchSessionStatus(sessionName, silent = false) {
+  if (!sessionName) {
+    updateStatusUI('NO_ACCOUNT', null);
+    return;
+  }
+
   try {
     const res = await fetch(`${API_BASE}/api/sessions/${sessionName}`, {
       headers: getAuthHeaders()
@@ -216,22 +234,52 @@ function updateStatusUI(status, data) {
   const statePill = document.getElementById('sessionStatePill');
   const engineEl = document.getElementById('engineDisplay');
   const suggestedNameInput = document.getElementById('suggestedChannelNameInput');
+  const headerSessionId = document.getElementById('qrSessionNameHeader');
+  const footerSessionId = document.getElementById('activeSessionFooterDisplay');
 
   const tabsEl = document.getElementById('pairMethodTabs');
   const qrView = document.getElementById('tabQrView');
   const codeView = document.getElementById('tabCodeView');
   const connectedView = document.getElementById('deviceConnectedView');
+  const noAccountsView = document.getElementById('noAccountsSelectedView');
   const connectedNameEl = document.getElementById('connectedNameDisplay');
   const connectedPhoneEl = document.getElementById('connectedPhoneDisplay');
-
-  const phone = data?.me?.id ? `+${data.me.id.split('@')[0]}` : '';
-  const pushName = data?.me?.pushName || '';
-
-  const isOnline = status === 'WORKING' || status === 'CONNECTED' || (data?.engine && data.engine.state === 'CONNECTED');
 
   const btnRestart = document.getElementById('btnRestartSession');
   const btnDisconnect = document.getElementById('btnDisconnectSession');
   const btnDelete = document.getElementById('btnDeleteSession');
+
+  // Handle EMPTY / NO ACCOUNTS STATE
+  if (!activeSession || allSessions.length === 0) {
+    if (nameEl) nameEl.textContent = typeof getTranslation === 'function' ? getTranslation('empty_no_accounts_title', 'No WhatsApp Accounts Yet') : 'No Accounts';
+    if (phoneEl) phoneEl.textContent = '--';
+    if (statePill) {
+      statePill.textContent = 'NO_ACCOUNT';
+      statePill.className = 'px-2.5 py-0.5 rounded-full bg-slate-800 text-gray-500 font-semibold';
+    }
+    if (headerSessionId) headerSessionId.textContent = '--';
+    if (footerSessionId) footerSessionId.textContent = '--';
+
+    if (noAccountsView) noAccountsView.classList.remove('hidden');
+    if (connectedView) connectedView.classList.add('hidden');
+    if (qrView) qrView.classList.add('hidden');
+    if (codeView) codeView.classList.add('hidden');
+    if (tabsEl) tabsEl.classList.add('hidden');
+
+    if (btnRestart) btnRestart.classList.add('hidden');
+    if (btnDisconnect) btnDisconnect.classList.add('hidden');
+    if (btnDelete) btnDelete.classList.add('hidden');
+    return;
+  }
+
+  // Active Session Exists
+  if (noAccountsView) noAccountsView.classList.add('hidden');
+  if (headerSessionId) headerSessionId.textContent = activeSession;
+  if (footerSessionId) footerSessionId.textContent = activeSession;
+
+  const phone = data?.me?.id ? `+${data.me.id.split('@')[0]}` : '';
+  const pushName = data?.me?.pushName || '';
+  const isOnline = status === 'WORKING' || status === 'CONNECTED' || (data?.engine && data.engine.state === 'CONNECTED');
 
   if (isOnline) {
     nameEl.textContent = pushName || 'WhatsApp Connected';
@@ -242,12 +290,10 @@ function updateStatusUI(status, data) {
 
     if (engineEl) engineEl.textContent = data?.engine?.engine || 'WEBJS';
 
-    // Auto-update suggested name for ChatbotX with actual WhatsApp Profile Name & Phone
     if (suggestedNameInput) {
       suggestedNameInput.value = pushName && phone ? `${pushName} (${phone})` : (pushName || phone || `WhatsApp ${activeSession}`);
     }
 
-    // Show Clean Connected View (No Overlay, No QR)
     if (connectedView) {
       connectedView.classList.remove('hidden');
       if (connectedNameEl) connectedNameEl.textContent = pushName || 'WhatsApp Account';
@@ -258,7 +304,7 @@ function updateStatusUI(status, data) {
     if (tabsEl) tabsEl.classList.add('hidden');
 
     // Button Visibility for CONNECTED state:
-    // Show Restart & Disconnect; HIDE Delete (Must Disconnect first before deleting)
+    // Show Restart & Disconnect; HIDE Delete
     if (btnRestart) btnRestart.classList.remove('hidden');
     if (btnDisconnect) btnDisconnect.classList.remove('hidden');
     if (btnDelete) btnDelete.classList.add('hidden');
@@ -282,17 +328,11 @@ function updateStatusUI(status, data) {
       if (codeView) codeView.classList.remove('hidden');
     }
 
-    // Button Visibility for SCAN_QR state:
-    // HIDE Disconnect (not yet connected); SHOW Restart; SHOW Delete only if not default session
+    // Button Visibility for SCAN_QR state (Not yet connected):
+    // HIDE Disconnect; SHOW Restart; ALWAYS SHOW Delete
     if (btnDisconnect) btnDisconnect.classList.add('hidden');
     if (btnRestart) btnRestart.classList.remove('hidden');
-    if (btnDelete) {
-      if (activeSession !== 'default') {
-        btnDelete.classList.remove('hidden');
-      } else {
-        btnDelete.classList.add('hidden');
-      }
-    }
+    if (btnDelete) btnDelete.classList.remove('hidden');
 
   } else {
     nameEl.textContent = typeof getTranslation === 'function' ? getTranslation('step2_status_inactive', 'Unlinked') : 'Unlinked';
@@ -313,17 +353,11 @@ function updateStatusUI(status, data) {
       if (codeView) codeView.classList.remove('hidden');
     }
 
-    // Button Visibility for STOPPED/FAILED state:
-    // HIDE Disconnect; SHOW Restart; SHOW Delete only if not default session
+    // Button Visibility for STOPPED / UNLINKED state:
+    // HIDE Disconnect; SHOW Restart; ALWAYS SHOW Delete
     if (btnDisconnect) btnDisconnect.classList.add('hidden');
     if (btnRestart) btnRestart.classList.remove('hidden');
-    if (btnDelete) {
-      if (activeSession !== 'default') {
-        btnDelete.classList.remove('hidden');
-      } else {
-        btnDelete.classList.add('hidden');
-      }
-    }
+    if (btnDelete) btnDelete.classList.remove('hidden');
   }
 }
 
@@ -654,22 +688,26 @@ async function logoutSession() {
 }
 
 async function deleteActiveSession() {
-  if (activeSession === 'default') {
-    showToast('Default session cannot be deleted. You can disconnect it instead.', 'warning');
-    return;
-  }
+  if (!activeSession) return;
 
   const confirmMsg = typeof getTranslation === 'function' ? getTranslation('confirm_delete', 'Are you sure you want to delete this account?') : 'Are you sure you want to delete this account?';
   if (!confirm(confirmMsg)) return;
 
   showToast(`Deleting session ${activeSession}...`, 'warning');
   try {
-    await fetch(`${API_BASE}/api/sessions/${activeSession}`, {
+    const res = await fetch(`${API_BASE}/api/sessions/${activeSession}`, {
       method: 'DELETE',
       headers: getAuthHeaders()
     });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || `HTTP ${res.status}`);
+    }
+
     showToast(`Session '${activeSession}' deleted.`, 'info');
-    activeSession = 'default';
+    activeSession = null;
+    await fetchSessionsList();
     refreshAllData();
   } catch (err) {
     showToast(`Error deleting account: ${err.message}`, 'error');

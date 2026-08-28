@@ -233,6 +233,21 @@
             </div>
           </div>
 
+          <!-- NO ACCOUNTS EMPTY STATE VIEW -->
+          <div id="noAccountsSelectedView" class="py-12 flex flex-col items-center justify-center space-y-4 text-center hidden">
+            <div class="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+              <i class="ph-bold ph-plus-circle text-3xl"></i>
+            </div>
+            <div class="max-w-sm space-y-1.5">
+              <h3 class="text-base font-bold text-white" data-i18n="empty_no_accounts_title">No WhatsApp Accounts Yet</h3>
+              <p class="text-xs text-gray-400" data-i18n="empty_no_accounts_desc">Click the "+ Add Account" button at the top to create your first WhatsApp connection.</p>
+            </div>
+            <button onclick="openNewSessionModal()" class="px-5 py-2.5 rounded-full brand-btn-gradient text-xs font-bold text-white flex items-center space-x-1.5 cursor-pointer shadow-lg">
+              <i class="ph-bold ph-plus"></i>
+              <span data-i18n="header_btn_add">Add Account</span>
+            </button>
+          </div>
+
           <!-- CONNECTED DEVICE VIEW (CLEAN WITH CHECKMARK) -->
           <div id="deviceConnectedView" class="py-8 flex flex-col items-center justify-center space-y-4 hidden">
             <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
