@@ -864,7 +864,9 @@ async function checkForWahaUpdates() {
 
     // 1. Try fetching latest release from user's fork
     try {
-      const relRes = await fetch(`https://api.github.com/repos/${GITHUB_FORK_REPO}/releases/latest`);
+      const relRes = await fetch(`https://api.github.com/repos/${GITHUB_FORK_REPO}/releases/latest?t=${Date.now()}`, {
+        headers: { 'Accept': 'application/vnd.github.v3+json' }
+      });
       if (relRes.ok) {
         const relData = await relRes.json();
         if (relData && relData.tag_name) {
@@ -879,7 +881,7 @@ async function checkForWahaUpdates() {
     // 2. If no GitHub release, check repository tags
     if (!latestTag) {
       try {
-        const tagRes = await fetch(`https://api.github.com/repos/${GITHUB_FORK_REPO}/tags`);
+        const tagRes = await fetch(`https://api.github.com/repos/${GITHUB_FORK_REPO}/tags?t=${Date.now()}`);
         if (tagRes.ok) {
           const tags = await tagRes.json();
           if (Array.isArray(tags) && tags.length > 0 && tags[0].name) {
@@ -893,7 +895,7 @@ async function checkForWahaUpdates() {
 
     // 3. Fallback to upstream if fork has no tags/releases
     if (!latestTag) {
-      const upRes = await fetch('https://api.github.com/repos/devlikeapro/waha/releases/latest');
+      const upRes = await fetch(`https://api.github.com/repos/devlikeapro/waha/releases/latest?t=${Date.now()}`);
       if (upRes.ok) {
         const upData = await upRes.json();
         latestTag = upData.tag_name ? upData.tag_name.replace(/^v/, '') : '';
