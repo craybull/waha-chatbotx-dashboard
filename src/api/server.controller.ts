@@ -113,7 +113,12 @@ export class ServerController {
     try {
       for (const file of files) {
         const fileUrl = `${rawBase}/${file}?t=${Date.now()}`;
-        const res = await fetch(fileUrl);
+        const res = await fetch(fileUrl, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            Pragma: 'no-cache',
+          },
+        });
         if (!res.ok) {
           throw new Error(`Failed to download ${file} from GitHub (HTTP ${res.status})`);
         }

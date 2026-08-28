@@ -134,6 +134,19 @@ export const IMPORTS_CORE = [
         {
           rootPath: join(__dirname, '..', 'dashboard'),
           serveRoot: dashboardConfig.dashboardUri,
+          serveStaticOptions: {
+            cacheControl: false,
+            etag: false,
+            maxAge: 0,
+            setHeaders: (res) => {
+              res.setHeader(
+                'Cache-Control',
+                'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+              );
+              res.setHeader('Pragma', 'no-cache');
+              res.setHeader('Expires', '0');
+            },
+          },
         },
       ];
     },

@@ -845,9 +845,23 @@ const GITHUB_FORK_REPO = 'craybull/waha-chatbotx-dashboard';
 let currentWahaVersion = '2026.8.4';
 
 async function fetchLocalVersion() {
-  const verDisplay = document.getElementById('currentVersionDisplay');
-  if (verDisplay) {
-    verDisplay.textContent = `v${currentWahaVersion.replace(/^v/, '')}`;
+  try {
+    const res = await fetch(`${API_BASE}/api/version?t=${Date.now()}`, {
+      headers: getAuthHeaders()
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.version) {
+        currentWahaVersion = data.version;
+      }
+    }
+  } catch (err) {
+    console.warn('Could not fetch server version:', err);
+  } finally {
+    const verDisplay = document.getElementById('currentVersionDisplay');
+    if (verDisplay) {
+      verDisplay.textContent = `v${currentWahaVersion.replace(/^v/, '')}`;
+    }
   }
 }
 
@@ -911,7 +925,7 @@ async function performDashboardUpdate() {
     closeUpdateModal();
 
     setTimeout(() => {
-      window.location.reload(true);
+      window.location.href = window.location.pathname + '?_t=' + Date.now();
     }, 1500);
 
   } catch (err) {
@@ -923,6 +937,8 @@ async function performDashboardUpdate() {
 }
 
 async function checkForWahaUpdates(silent = false) {
+  await fetchLocalVersion();
+
   const btn = document.getElementById('btnCheckUpdate');
   const icon = document.getElementById('updateCheckIcon');
   const text = document.getElementById('updateCheckText');
