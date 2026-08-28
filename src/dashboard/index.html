@@ -151,7 +151,7 @@
       <!-- LEFT COLUMN: DEVICE CONNECTION & QR CODE (7 COLS) -->
       <div class="lg:col-span-7 flex flex-col space-y-6">
         
-        <div id="connectAccountCard" class="glass-card p-6 flex flex-col justify-between flex-1">
+        <div id="connectAccountCard" class="glass-card p-6 flex flex-col justify-between">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/10 gap-3">
             <div class="flex items-center space-x-3">
               <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center p-2 flex-shrink-0">
@@ -174,11 +174,11 @@
             </div>
           </div>
 
-          <!-- MIDDLE CONTENT AREA (VERTICALLY CENTERED & EXPANDABLE) -->
-          <div class="flex-1 flex flex-col justify-center my-auto min-h-[380px]">
+          <!-- MIDDLE CONTENT AREA (DYNAMIC COMPACT HEIGHT) -->
+          <div id="step1MiddleContent" class="flex flex-col justify-center my-auto">
 
             <!-- NO ACCOUNTS EMPTY STATE VIEW -->
-            <div id="noAccountsSelectedView" class="py-12 flex flex-col items-center justify-center space-y-4 text-center hidden">
+            <div id="noAccountsSelectedView" class="py-8 flex flex-col items-center justify-center space-y-4 text-center hidden">
               <div class="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
                 <i class="ph-bold ph-plus-circle text-3xl"></i>
               </div>
@@ -192,15 +192,15 @@
               </button>
             </div>
 
-            <!-- CONNECTED DEVICE VIEW (CLEAN WITH CHECKMARK) -->
-            <div id="deviceConnectedView" class="py-8 flex flex-col items-center justify-center space-y-4 hidden animate-fade-in">
-              <div class="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-xl shadow-emerald-500/10">
-                <i class="ph-bold ph-check text-3xl"></i>
+            <!-- CONNECTED DEVICE VIEW (COMPACT & CLEAN WITH CHECKMARK) -->
+            <div id="deviceConnectedView" class="py-4 flex flex-col items-center justify-center space-y-2.5 hidden animate-fade-in">
+              <div class="w-13 h-13 p-3 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-xl shadow-emerald-500/10">
+                <i class="ph-bold ph-check text-2xl"></i>
               </div>
-              <div class="text-center space-y-1.5">
-                <h3 id="connectedNameDisplay" class="text-base font-bold text-white">Quoc Kiem</h3>
-                <p id="connectedPhoneDisplay" class="text-sm text-blue-400 font-mono">+84384524243</p>
-                <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mt-1">
+              <div class="text-center space-y-0.5">
+                <h3 id="connectedNameDisplay" class="text-base font-bold text-white leading-snug">Quoc Kiem</h3>
+                <p id="connectedPhoneDisplay" class="text-xs text-blue-400 font-mono">+84384524243</p>
+                <div class="inline-flex items-center space-x-1.5 px-3 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mt-1">
                   <span class="relative flex h-2 w-2">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -287,34 +287,36 @@
         </div>
 
         <!-- QUICK TEST MESSAGE BOX FOR ACTIVE ACCOUNT (ONLY SHOWN WHEN ONLINE) -->
-        <div id="testMessageSection" class="glass-card p-6 space-y-4 hidden">
-          <div class="flex items-center space-x-3 pb-3 border-b border-white/10">
-            <div class="p-2 rounded-xl bg-blue-500/10 text-blue-400">
-              <i class="ph-bold ph-paper-plane-tilt text-xl"></i>
+        <div id="testMessageSection" class="glass-card p-6 flex-1 flex flex-col justify-between space-y-4 hidden">
+          <div class="space-y-4">
+            <div class="flex items-center space-x-3 pb-3 border-b border-white/10">
+              <div class="p-2 rounded-xl bg-blue-500/10 text-blue-400 flex-shrink-0">
+                <i class="ph-bold ph-paper-plane-tilt text-xl"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-white" data-i18n="test_title">Test Outbound Message</h3>
+                <p class="text-xs text-gray-400"><span data-i18n="test_desc">Send direct message from WhatsApp account</span> <span class="activeSessionInlineName text-blue-400 font-mono font-bold">default</span></p>
+              </div>
             </div>
-            <div>
-              <h3 class="text-base font-bold text-white" data-i18n="test_title">Test Outbound Message</h3>
-              <p class="text-xs text-gray-400"><span data-i18n="test_desc">Send direct message from WhatsApp account</span> <span class="activeSessionInlineName text-blue-400 font-mono font-bold">default</span></p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-gray-300 mb-1 flex justify-between">
+                  <span data-i18n="test_recipient_label">Recipient Phone Number:</span>
+                  <span class="text-[10px] text-blue-400 font-normal" data-i18n="test_recipient_sub">Country code + Phone</span>
+                </label>
+                <input id="testRecipientInput" type="text" placeholder="e.g. 14155552671" data-i18n-placeholder="test_recipient_placeholder" class="w-full px-3 py-2 rounded-xl custom-input text-xs font-mono">
+                <p class="text-[11px] text-gray-400 mt-1" data-i18n="test_recipient_hint">Standard format: Country code + Phone without leading 0 (e.g. 14155552671).</p>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="test_message_label">Message Content:</label>
+                <textarea id="testMessageInput" rows="3" class="w-full px-3 py-2 rounded-xl custom-input text-xs resize-none">Hello! This is a test message from ChatbotX WhatsApp Gateway.</textarea>
+              </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-gray-300 mb-1 flex justify-between">
-                <span data-i18n="test_recipient_label">Recipient Phone Number:</span>
-                <span class="text-[10px] text-blue-400 font-normal" data-i18n="test_recipient_sub">Country code + Phone</span>
-              </label>
-              <input id="testRecipientInput" type="text" placeholder="e.g. 14155552671" data-i18n-placeholder="test_recipient_placeholder" class="w-full px-3 py-2 rounded-xl custom-input text-xs font-mono">
-              <p class="text-[11px] text-gray-400 mt-1" data-i18n="test_recipient_hint">Standard format: Country code + Phone without leading 0 (e.g. 14155552671).</p>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="test_message_label">Message Content:</label>
-              <textarea id="testMessageInput" rows="2" class="w-full px-3 py-2 rounded-xl custom-input text-xs resize-none">Hello! This is a test message from ChatbotX WhatsApp Gateway.</textarea>
-            </div>
-          </div>
-
-          <div class="flex justify-end">
-            <button onclick="sendTestMessage()" class="px-5 py-2.5 rounded-full brand-btn-gradient text-xs font-bold text-white flex items-center space-x-1.5 cursor-pointer">
+          <div class="flex justify-end pt-2">
+            <button onclick="sendTestMessage()" class="px-5 py-2.5 rounded-full brand-btn-gradient text-xs font-bold text-white flex items-center space-x-1.5 cursor-pointer shadow-lg transition">
               <i class="ph-bold ph-paper-plane-right"></i>
               <span data-i18n="test_btn_send">Send Test Message</span>
             </button>
