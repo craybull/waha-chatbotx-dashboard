@@ -808,10 +808,10 @@ function showToast(message, type = 'info') {
   }, 4000);
 }
 
-// 11. Check GitHub Version Updates for Fork
+// 11. Core WAHA Version & GitHub Auto-Update Check
 const GITHUB_FORK_REPO = 'craybull/waha-chatbotx-dashboard';
 
-let currentWahaVersion = '2026.8.3';
+let currentWahaVersion = '2026.8.2';
 
 async function fetchLocalVersion() {
   const verDisplay = document.getElementById('currentVersionDisplay');
