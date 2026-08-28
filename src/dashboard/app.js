@@ -765,13 +765,16 @@ async function fetchLocalVersion() {
     if (res.ok) {
       const data = await res.json();
       if (data && data.version) {
-        currentWahaVersion = data.version;
-        const verDisplay = document.getElementById('currentVersionDisplay');
-        if (verDisplay) verDisplay.textContent = `v${data.version}`;
+        if (data.version >= currentWahaVersion) {
+          currentWahaVersion = data.version;
+        }
       }
     }
   } catch (err) {
     console.warn('Could not fetch server version:', err);
+  } finally {
+    const verDisplay = document.getElementById('currentVersionDisplay');
+    if (verDisplay) verDisplay.textContent = `v${currentWahaVersion.replace(/^v/, '')}`;
   }
 }
 

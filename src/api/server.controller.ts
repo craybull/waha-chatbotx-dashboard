@@ -124,6 +124,7 @@ export class ServerController {
           }
         }
       }
+      VERSION.version = cleanTag.replace(/^v/, '');
       this.logger.log(`Dashboard hot-updated successfully to ${cleanTag}`);
       return {
         success: true,
