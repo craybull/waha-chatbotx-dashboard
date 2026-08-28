@@ -155,17 +155,17 @@
                 <img src="https://chatbotx.io/wp-content/themes/chatbotx-theme/assets/images/WhatsApp.svg" alt="WhatsApp" class="w-6 h-6 object-contain">
               </div>
               <div>
-                <h2 class="text-lg font-bold text-white"><span data-i18n="step3_title">Connect WhatsApp Account</span> (<span id="qrSessionNameHeader" class="text-blue-400 font-mono">default</span>)</h2>
-                <p class="text-xs text-gray-400" data-i18n="step3_desc">Scan QR code or use Phone Pairing Code</p>
+                <h2 class="text-lg font-bold text-white"><span data-i18n="step1_title">Connect WhatsApp Account</span> (<span id="qrSessionNameHeader" class="text-blue-400 font-mono">default</span>)</h2>
+                <p class="text-xs text-gray-400" data-i18n="step1_desc">Scan QR code or use Phone Pairing Code</p>
               </div>
             </div>
             
             <!-- Method Tabs (Pill - 1 Single Row) -->
             <div id="pairMethodTabs" class="inline-flex items-center p-1 bg-[#1F2937] rounded-full border border-white/5 text-xs whitespace-nowrap flex-nowrap flex-shrink-0 self-start sm:self-auto">
-              <button id="tabQrBtn" onclick="switchPairTab('qr')" class="px-4 py-1.5 text-xs font-semibold rounded-full bg-blue-600 text-white transition cursor-pointer whitespace-nowrap" data-i18n="step3_tab_qr">
+              <button id="tabQrBtn" onclick="switchPairTab('qr')" class="px-4 py-1.5 text-xs font-semibold rounded-full bg-blue-600 text-white transition cursor-pointer whitespace-nowrap" data-i18n="step1_tab_qr">
                 QR Code
               </button>
-              <button id="tabCodeBtn" onclick="switchPairTab('code')" class="px-4 py-1.5 text-xs font-semibold rounded-full text-gray-400 hover:text-white transition cursor-pointer whitespace-nowrap" data-i18n="step3_tab_pairing">
+              <button id="tabCodeBtn" onclick="switchPairTab('code')" class="px-4 py-1.5 text-xs font-semibold rounded-full text-gray-400 hover:text-white transition cursor-pointer whitespace-nowrap" data-i18n="step1_tab_pairing">
                 Phone Pairing Code
               </button>
             </div>
@@ -214,33 +214,33 @@
                 <!-- Loading / Scanner Placeholder -->
                 <div id="qrLoadingSpinner" class="flex flex-col items-center space-y-3 text-slate-800">
                   <i class="ph-bold ph-spinner animate-spin text-3xl text-blue-600"></i>
-                  <span class="text-xs font-semibold text-slate-600" data-i18n="step3_qr_loading">Loading QR Code...</span>
+                  <span class="text-xs font-semibold text-slate-600" data-i18n="step1_qr_loading">Loading QR Code...</span>
                 </div>
 
               </div>
 
               <!-- QR Instructions -->
               <div class="text-center space-y-1 max-w-sm">
-                <p class="text-xs text-gray-300 font-medium" data-i18n="step3_qr_instructions">Open WhatsApp on your phone > Settings > Linked Devices > Link a Device > Scan QR</p>
-                <p class="text-[11px] text-gray-500" data-i18n="step3_qr_auto_refresh">QR code refreshes automatically when unlinked</p>
+                <p class="text-xs text-gray-300 font-medium" data-i18n="step1_qr_instructions">Open WhatsApp on your phone > Settings > Linked Devices > Link a Device > Scan QR</p>
+                <p class="text-[11px] text-gray-500" data-i18n="step1_qr_auto_refresh">QR code refreshes automatically when unlinked</p>
               </div>
             </div>
 
             <!-- TAB 2: PAIRING CODE VIEW -->
             <div id="tabCodeView" class="py-6 space-y-5 hidden max-w-md mx-auto">
               <div class="space-y-2 text-center">
-                <h3 class="text-sm font-bold text-white" data-i18n="step3_pairing_subheader">Link with Phone Number</h3>
-                <p class="text-xs text-gray-400" data-i18n="step3_phone_hint">Country Code + Phone without leading 0 (e.g. 14155552671).</p>
+                <h3 class="text-sm font-bold text-white" data-i18n="step1_pairing_subheader">Link with Phone Number</h3>
+                <p class="text-xs text-gray-400" data-i18n="step1_phone_hint">Country Code + Phone without leading 0 (e.g. 14155552671).</p>
               </div>
 
               <div class="space-y-3">
                 <div>
-                  <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="step3_phone_label">WhatsApp Phone Number:</label>
+                  <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="step1_phone_label">WhatsApp Phone Number:</label>
                   <div class="flex space-x-2">
-                    <input id="pairingPhoneInput" type="text" placeholder="e.g. 14155552671" data-i18n-placeholder="step3_phone_placeholder" class="flex-1 px-3.5 py-2.5 rounded-xl custom-input text-xs font-mono">
+                    <input id="pairingPhoneInput" type="text" placeholder="e.g. 14155552671" data-i18n-placeholder="step1_phone_placeholder" class="flex-1 px-3.5 py-2.5 rounded-xl custom-input text-xs font-mono">
                     <button onclick="requestPairingCode()" class="px-4 py-2.5 rounded-full brand-btn-gradient text-xs font-bold text-white flex items-center space-x-1.5 flex-shrink-0 cursor-pointer">
                       <i class="ph-bold ph-key"></i>
-                      <span data-i18n="step3_btn_request_code">Get Code</span>
+                      <span data-i18n="step1_btn_request_code">Get Code</span>
                     </button>
                   </div>
                 </div>
@@ -248,11 +248,11 @@
 
               <!-- Pairing Code Display Box -->
               <div id="pairingCodeResultBox" class="p-4 rounded-2xl bg-[#0F172A] border border-blue-500/30 text-center space-y-2 hidden">
-                <p class="text-xs text-gray-400" data-i18n="step3_pairing_code_label">Enter this 8-digit code into WhatsApp on your phone:</p>
+                <p class="text-xs text-gray-400" data-i18n="step1_pairing_code_label">Enter this 8-digit code into WhatsApp on your phone:</p>
                 <div id="pairingCodeDisplay" class="text-3xl font-extrabold tracking-widest text-blue-400 font-mono select-all py-2">
                   ---- ----
                 </div>
-                <p class="text-xs text-gray-400" data-i18n="step3_pairing_step_instructions">Open WhatsApp > Linked Devices > Link with phone number > Enter the code above.</p>
+                <p class="text-xs text-gray-400" data-i18n="step1_pairing_step_instructions">Open WhatsApp > Linked Devices > Link with phone number > Enter the code above.</p>
               </div>
             </div>
 
@@ -320,7 +320,7 @@
       <!-- RIGHT COLUMN: 1-CLICK CHATBOTX SETUP & CONFIGURATION (5 COLS) -->
       <div class="lg:col-span-5 space-y-6">
         
-        <!-- STEP 1: 1-CLICK COPY TO CHATBOTX MODAL -->
+        <!-- STEP 2: 1-CLICK COPY TO CHATBOTX MODAL -->
         <div class="glass-card p-6 space-y-4 border-blue-500/20">
           <div class="pb-3.5 border-b border-white/10 space-y-3">
             <div class="flex items-center space-x-2.5">
@@ -328,8 +328,8 @@
                 <i class="ph-bold ph-magic-wand text-lg"></i>
               </div>
               <div>
-                <h3 class="text-sm font-bold text-white" data-i18n="step1_title">Step 1: Create Channel on ChatbotX</h3>
-                <p class="text-xs text-gray-400" data-i18n="step1_desc">Paste this URL into Callback URL field on ChatbotX</p>
+                <h3 class="text-sm font-bold text-white" data-i18n="step2_title">Step 2: Create Channel on ChatbotX</h3>
+                <p class="text-xs text-gray-400" data-i18n="step2_desc">Paste this URL into Callback URL field on ChatbotX</p>
               </div>
             </div>
             <div>
@@ -344,14 +344,14 @@
             <!-- 1. Auto Suggested Name -->
             <div>
               <label class="block text-xs font-semibold text-gray-300 mb-1 flex items-center justify-between">
-                <span>1. <span data-i18n="step1_channel_name_label">Channel Name (Name):</span></span>
-                <span class="text-[10px] text-emerald-400 font-normal" data-i18n="step1_auto_detect">Auto-detected from WhatsApp</span>
+                <span>1. <span data-i18n="step2_channel_name_label">Channel Name (Name):</span></span>
+                <span class="text-[10px] text-emerald-400 font-normal" data-i18n="step2_auto_detect">Auto-detected from WhatsApp</span>
               </label>
               <div class="flex space-x-2">
                 <input id="suggestedChannelNameInput" type="text" readonly value="WhatsApp default" class="flex-1 px-3 py-2 rounded-xl bg-[#07090E] border border-white/10 text-xs text-gray-200 font-medium select-all">
                 <button onclick="copyElementText('suggestedChannelNameInput', 'Channel Name')" class="px-3.5 py-2 rounded-xl bg-[#1F2937] hover:bg-[#374151] text-xs font-semibold text-blue-400 border border-white/10 flex items-center space-x-1 transition flex-shrink-0 cursor-pointer">
                   <i class="ph-bold ph-copy"></i>
-                  <span data-i18n="step1_btn_copy">Copy</span>
+                  <span data-i18n="step2_btn_copy">Copy</span>
                 </button>
               </div>
             </div>
@@ -359,21 +359,21 @@
             <!-- 2. Auto Dynamic Callback URL -->
             <div>
               <label class="block text-xs font-semibold text-gray-300 mb-1 flex items-center justify-between">
-                <span>2. <span data-i18n="step1_callback_url_label">Callback URL (This Channel):</span></span>
-                <span class="text-[10px] text-blue-400 font-normal" data-i18n="step1_dedicated_route">Dedicated route for this number</span>
+                <span>2. <span data-i18n="step2_callback_url_label">Callback URL (This Channel):</span></span>
+                <span class="text-[10px] text-blue-400 font-normal" data-i18n="step2_dedicated_route">Dedicated route for this number</span>
               </label>
               <div class="flex space-x-2">
                 <input id="suggestedCallbackUrlInput" type="text" readonly value="https://waha.bnncreative.site/webhooks/chatbotx" class="flex-1 px-3 py-2 rounded-xl bg-[#07090E] border border-white/10 text-xs text-blue-300 font-mono select-all truncate">
                 <button onclick="copyElementText('suggestedCallbackUrlInput', 'Callback URL')" class="px-3.5 py-2 rounded-xl bg-[#1F2937] hover:bg-[#374151] text-xs font-semibold text-blue-400 border border-white/10 flex items-center space-x-1 transition flex-shrink-0 cursor-pointer">
                   <i class="ph-bold ph-copy"></i>
-                  <span data-i18n="step1_btn_copy">Copy</span>
+                  <span data-i18n="step2_btn_copy">Copy</span>
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- STEP 2: ACTIVATE TOKEN IN WAHA DASHBOARD -->
+        <!-- STEP 3: ACTIVATE TOKEN IN WAHA DASHBOARD -->
         <div class="glass-card p-6 space-y-4">
           <div class="flex items-center justify-between pb-3.5 border-b border-white/10">
             <div class="flex items-center space-x-2.5">
@@ -381,14 +381,14 @@
                 <i class="ph-bold ph-key text-lg"></i>
               </div>
               <div>
-                <h2 class="text-sm font-bold text-white" data-i18n="step2_title">Step 2: Link ChatbotX Channel</h2>
-                <p class="text-[11px] text-gray-400" data-i18n="step2_subtitle">Paste Channel API Token generated from ChatbotX</p>
+                <h2 class="text-sm font-bold text-white" data-i18n="step3_title">Step 3: Link ChatbotX Channel</h2>
+                <p class="text-[11px] text-gray-400" data-i18n="step3_subtitle">Paste Channel API Token generated from ChatbotX</p>
               </div>
             </div>
-            <!-- Step 2 Link Status Badge -->
+            <!-- Step 3 Link Status Badge -->
             <div id="step2StatusBadge" class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#0B1120] text-gray-400 border border-white/10 flex items-center space-x-1.5 flex-shrink-0">
               <span class="w-1.5 h-1.5 rounded-full bg-gray-500"></span>
-              <span id="step2StatusText" data-i18n="step2_status_inactive">Not Linked</span>
+              <span id="step2StatusText" data-i18n="step3_status_inactive">Not Linked</span>
             </div>
           </div>
 
@@ -396,21 +396,21 @@
             
             <div>
               <label class="block text-xs font-semibold text-gray-300 mb-1 flex justify-between">
-                <span data-i18n="step2_token_label">ChatbotX API Token:</span>
-                <span class="text-[11px] text-blue-400 font-normal" data-i18n="step2_token_sub">Obtain after clicking Create</span>
+                <span data-i18n="step3_token_label">ChatbotX API Token:</span>
+                <span class="text-[11px] text-blue-400 font-normal" data-i18n="step3_token_sub">Obtain after clicking Create</span>
               </label>
-              <input id="cbxApiTokenInput" type="password" placeholder="Paste Channel Token from ChatbotX here..." data-i18n-placeholder="step2_token_placeholder" class="w-full px-3.5 py-2.5 rounded-xl custom-input text-xs font-mono" required>
+              <input id="cbxApiTokenInput" type="password" placeholder="Paste Channel Token from ChatbotX here..." data-i18n-placeholder="step3_token_placeholder" class="w-full px-3.5 py-2.5 rounded-xl custom-input text-xs font-mono" required>
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="step2_api_url_label">ChatbotX API URL:</label>
+              <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="step3_api_url_label">ChatbotX API URL:</label>
               <input id="cbxApiUrlInput" type="text" value="https://app.chatbotx.io/api" class="w-full px-3.5 py-2.5 rounded-xl custom-input text-xs font-mono" required>
             </div>
 
             <div>
               <label class="block text-xs font-semibold text-gray-300 mb-1 flex justify-between">
-                <span data-i18n="step2_media_url_label">Media & Webhook Base URL:</span>
-                <span class="text-[11px] text-gray-400 font-normal" data-i18n="step2_media_url_sub">Your Domain</span>
+                <span data-i18n="step3_media_url_label">Media & Webhook Base URL:</span>
+                <span class="text-[11px] text-gray-400 font-normal" data-i18n="step3_media_url_sub">Your Domain</span>
               </label>
               <input id="cbxMediaUrlInput" type="text" placeholder="https://waha.bnncreative.site" class="w-full px-3.5 py-2.5 rounded-xl custom-input text-xs font-mono">
             </div>
@@ -418,14 +418,14 @@
             <!-- Include Groups checkbox -->
             <div class="flex items-center space-x-2 pt-1">
               <input id="cbxIncludeGroupsInput" type="checkbox" class="rounded bg-[#0F172A] border-white/10 text-blue-500 focus:ring-0">
-              <label for="cbxIncludeGroupsInput" class="text-xs text-gray-300 cursor-pointer" data-i18n="step2_include_groups">Forward WhatsApp group messages to ChatbotX</label>
+              <label for="cbxIncludeGroupsInput" class="text-xs text-gray-300 cursor-pointer" data-i18n="step3_include_groups">Forward WhatsApp group messages to ChatbotX</label>
             </div>
 
             <!-- Save Button -->
             <div class="pt-2">
-              <button type="submit" id="saveConfigBtn" class="w-full py-3 rounded-full brand-btn-gradient text-sm font-bold text-white flex items-center justify-center space-x-2 cursor-pointer">
+              <button type="submit" id="saveConfigBtn" class="w-full py-3 rounded-full brand-btn-gradient text-sm font-bold text-white flex items-center justify-center space-x-2 cursor-pointer shadow-lg transition">
                 <i class="ph-bold ph-floppy-disk"></i>
-                <span data-i18n="step2_btn_save">Save & Activate Channel</span>
+                <span data-i18n="step3_btn_save">Save & Activate Channel</span>
               </button>
             </div>
 
