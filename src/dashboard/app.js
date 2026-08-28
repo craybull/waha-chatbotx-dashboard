@@ -482,6 +482,9 @@ function getAppIdForSession(sessionName) {
 
 async function loadChatbotxConfig() {
   const appId = getAppIdForSession(activeSession);
+  const statusBadge = document.getElementById('step2StatusBadge');
+  const saveBtn = document.getElementById('saveConfigBtn');
+
   try {
     const res = await fetch(`${API_BASE}/api/apps/${appId}`, {
       headers: getAuthHeaders()
@@ -489,14 +492,26 @@ async function loadChatbotxConfig() {
 
     if (res.ok) {
       const app = await res.json();
-      if (app && app.config) {
+      if (app && app.config && app.config.apiToken) {
         document.getElementById('cbxApiTokenInput').value = app.config.apiToken || '';
         document.getElementById('cbxApiUrlInput').value = app.config.apiUrl || 'https://app.chatbotx.io/api';
         document.getElementById('cbxMediaUrlInput').value = app.config.mediaBaseUrl || window.location.origin;
         document.getElementById('cbxIncludeGroupsInput').checked = !!app.config.includeGroups;
 
-        document.getElementById('cbxChannelStatus').textContent = app.enabled ? 'Đã liên kết' : 'Tạm tắt';
-        document.getElementById('cbxApiUrlDisplay').textContent = app.config.apiUrl || 'https://app.chatbotx.io/api';
+        if (statusBadge) {
+          if (app.enabled) {
+            statusBadge.className = 'px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center space-x-1.5 flex-shrink-0 animate-fade-in';
+            statusBadge.innerHTML = '<i class="ph-bold ph-check-circle text-xs text-emerald-400"></i><span data-i18n="step2_status_active">Linked & Active</span>';
+          } else {
+            statusBadge.className = 'px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center space-x-1.5 flex-shrink-0';
+            statusBadge.innerHTML = '<i class="ph-bold ph-pause-circle text-xs text-amber-400"></i><span>Paused</span>';
+          }
+        }
+
+        if (saveBtn) {
+          saveBtn.className = 'w-full py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-sm font-bold text-white flex items-center justify-center space-x-2 cursor-pointer shadow-lg transition';
+          saveBtn.innerHTML = '<i class="ph-bold ph-check-circle text-base"></i><span data-i18n="step2_btn_saved">Channel Linked (Click to Update)</span>';
+        }
         return;
       }
     }
@@ -506,7 +521,16 @@ async function loadChatbotxConfig() {
     document.getElementById('cbxApiUrlInput').value = 'https://app.chatbotx.io/api';
     document.getElementById('cbxMediaUrlInput').value = window.location.origin;
     document.getElementById('cbxIncludeGroupsInput').checked = false;
-    document.getElementById('cbxChannelStatus').textContent = 'Chưa liên kết';
+
+    if (statusBadge) {
+      statusBadge.className = 'px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#0B1120] text-gray-400 border border-white/10 flex items-center space-x-1.5 flex-shrink-0';
+      statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-gray-500"></span><span data-i18n="step2_status_inactive">Not Linked</span>';
+    }
+
+    if (saveBtn) {
+      saveBtn.className = 'w-full py-3 rounded-full brand-btn-gradient text-sm font-bold text-white flex items-center justify-center space-x-2 cursor-pointer shadow-lg transition';
+      saveBtn.innerHTML = '<i class="ph-bold ph-floppy-disk"></i><span data-i18n="step2_btn_save">Save & Activate Channel</span>';
+    }
   } catch (err) {
     console.error(`Error loading ChatbotX config for ${appId}:`, err);
   }
@@ -556,12 +580,11 @@ async function saveChatbotxConfig(event) {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     showToast(`Đã liên kết kênh ChatbotX thành công!`, 'success');
-    loadChatbotxConfig();
+    await loadChatbotxConfig();
   } catch (err) {
     showToast(`Lỗi khi lưu cấu hình: ${err.message}`, 'error');
   } finally {
     btn.disabled = false;
-    btn.innerHTML = originalText;
   }
 }
 

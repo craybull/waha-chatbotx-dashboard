@@ -375,13 +375,20 @@
 
         <!-- STEP 2: ACTIVATE TOKEN IN WAHA DASHBOARD -->
         <div class="glass-card p-6 space-y-4">
-          <div class="flex items-center space-x-3 pb-3 border-b border-white/10">
-            <div class="p-2 rounded-xl bg-blue-500/10 text-blue-400">
-              <i class="ph-bold ph-key text-lg"></i>
+          <div class="flex items-center justify-between pb-3.5 border-b border-white/10">
+            <div class="flex items-center space-x-2.5">
+              <div class="p-2 rounded-xl bg-blue-500/10 text-blue-400 flex-shrink-0">
+                <i class="ph-bold ph-key text-lg"></i>
+              </div>
+              <div>
+                <h2 class="text-sm font-bold text-white" data-i18n="step2_title">Step 2: Link ChatbotX Channel</h2>
+                <p class="text-[11px] text-gray-400" data-i18n="step2_subtitle">Paste Channel API Token generated from ChatbotX</p>
+              </div>
             </div>
-            <div>
-              <h2 class="text-sm font-bold text-white" data-i18n="step2_title">Step 2: Link ChatbotX Channel</h2>
-              <p class="text-[11px] text-gray-400" data-i18n="step2_subtitle">Paste Channel API Token generated from ChatbotX</p>
+            <!-- Step 2 Link Status Badge -->
+            <div id="step2StatusBadge" class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#0B1120] text-gray-400 border border-white/10 flex items-center space-x-1.5 flex-shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-gray-500"></span>
+              <span id="step2StatusText" data-i18n="step2_status_inactive">Not Linked</span>
             </div>
           </div>
 
