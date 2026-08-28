@@ -13,6 +13,22 @@ function getAuthHeaders(extra = {}) {
   return headers;
 }
 
+// Poll sessions and active status with adaptive interval
+let currentPollingInterval = 5000;
+let lastKnownOnlineState = {};
+
+function setAdaptivePolling(intervalMs) {
+  if (currentPollingInterval === intervalMs && pollingTimer) return;
+  currentPollingInterval = intervalMs;
+  if (pollingTimer) clearInterval(pollingTimer);
+  pollingTimer = setInterval(async () => {
+    if (activeSession) {
+      await fetchSessionStatus(activeSession, true);
+      await fetchSessionsList(true);
+    }
+  }, currentPollingInterval);
+}
+
 // Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
   initDomainDisplays();
@@ -24,11 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
     checkForWahaUpdates(true);
   }, 1000);
 
-  // Poll sessions and active status every 5 seconds
-  pollingTimer = setInterval(() => {
-    fetchSessionsList(true);
-    fetchSessionStatus(activeSession, true);
-  }, 5000);
+  // Start polling
+  setAdaptivePolling(1500);
 });
 
 function initDomainDisplays() {
@@ -309,6 +322,18 @@ function updateStatusUI(status, data) {
   const isOnline = status === 'WORKING' || status === 'CONNECTED' || (data?.engine && data.engine.state === 'CONNECTED');
 
   if (isOnline) {
+    // If just transitioned from offline/QR to online -> Celebrate & Auto-Refresh
+    if (!lastKnownOnlineState[activeSession]) {
+      lastKnownOnlineState[activeSession] = true;
+      const connectedMsg = typeof getTranslation === 'function' ? getTranslation('toast_connected_success', 'WhatsApp account connected successfully!') : 'WhatsApp account connected successfully!';
+      showToast(`🎉 ${connectedMsg} ${pushName || phone ? `(${pushName || phone})` : ''}`, 'success');
+      loadChatbotxConfig();
+      fetchSessionsList(true);
+    }
+
+    // Normal polling (4s) when already online
+    setAdaptivePolling(4000);
+
     if (nameEl) nameEl.textContent = pushName || 'WhatsApp Connected';
     if (phoneEl) phoneEl.textContent = phone || '--';
     
@@ -339,41 +364,28 @@ function updateStatusUI(status, data) {
     if (btnDelete) btnDelete.classList.add('hidden');
     if (testSection) testSection.classList.remove('hidden');
 
-  } else if (status === 'SCAN_QR_CODE') {
-    if (nameEl) nameEl.textContent = typeof getTranslation === 'function' ? getTranslation('session_status_scan_qr', 'Scan QR Code') : 'Scan QR Code';
-    if (phoneEl) phoneEl.textContent = typeof getTranslation === 'function' ? getTranslation('step3_desc', 'Scan QR or use Pairing Code') : 'Scan QR or use Pairing Code';
-    
-    if (statePill) {
-      statePill.textContent = 'SCAN_QR';
-      statePill.className = 'px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-semibold';
-    }
-
-    if (suggestedNameInput) suggestedNameInput.value = `WhatsApp ${activeSession}`;
-
-    if (connectedView) connectedView.classList.add('hidden');
-    if (tabsEl) tabsEl.classList.remove('hidden');
-    if (currentPairTab === 'qr') {
-      if (qrView) qrView.classList.remove('hidden');
-      if (codeView) codeView.classList.add('hidden');
-    } else {
-      if (qrView) qrView.classList.add('hidden');
-      if (codeView) codeView.classList.remove('hidden');
-    }
-
-    // Button Visibility for SCAN_QR state (Not yet connected):
-    // HIDE Disconnect; SHOW Restart; ALWAYS SHOW Delete; HIDE Test Message
-    if (btnDisconnect) btnDisconnect.classList.add('hidden');
-    if (btnRestart) btnRestart.classList.remove('hidden');
-    if (btnDelete) btnDelete.classList.remove('hidden');
-    if (testSection) testSection.classList.add('hidden');
-
   } else {
-    if (nameEl) nameEl.textContent = typeof getTranslation === 'function' ? getTranslation('step2_status_inactive', 'Unlinked') : 'Unlinked';
-    if (phoneEl) phoneEl.textContent = '--';
-    
-    if (statePill) {
-      statePill.textContent = status || 'STOPPED';
-      statePill.className = 'px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-400 font-semibold';
+    lastKnownOnlineState[activeSession] = false;
+
+    // Fast polling (1.2s) while waiting for user to scan QR or connect!
+    setAdaptivePolling(1200);
+
+    if (status === 'SCAN_QR_CODE') {
+      if (nameEl) nameEl.textContent = typeof getTranslation === 'function' ? getTranslation('session_status_scan_qr', 'Scan QR Code') : 'Scan QR Code';
+      if (phoneEl) phoneEl.textContent = typeof getTranslation === 'function' ? getTranslation('step3_desc', 'Scan QR or use Pairing Code') : 'Scan QR or use Pairing Code';
+      
+      if (statePill) {
+        statePill.textContent = 'SCAN_QR';
+        statePill.className = 'px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-semibold';
+      }
+    } else {
+      if (nameEl) nameEl.textContent = typeof getTranslation === 'function' ? getTranslation('step2_status_inactive', 'Unlinked') : 'Unlinked';
+      if (phoneEl) phoneEl.textContent = '--';
+      
+      if (statePill) {
+        statePill.textContent = status || 'STOPPED';
+        statePill.className = 'px-2.5 py-0.5 rounded-full bg-red-500/20 text-red-400 font-semibold';
+      }
     }
 
     if (suggestedNameInput) suggestedNameInput.value = `WhatsApp ${activeSession}`;
@@ -388,8 +400,7 @@ function updateStatusUI(status, data) {
       if (codeView) codeView.classList.remove('hidden');
     }
 
-    // Button Visibility for STOPPED / UNLINKED state:
-    // HIDE Disconnect; SHOW Restart; ALWAYS SHOW Delete; HIDE Test Message
+    // Button Visibility for STOPPED / SCAN_QR state:
     if (btnDisconnect) btnDisconnect.classList.add('hidden');
     if (btnRestart) btnRestart.classList.remove('hidden');
     if (btnDelete) btnDelete.classList.remove('hidden');
