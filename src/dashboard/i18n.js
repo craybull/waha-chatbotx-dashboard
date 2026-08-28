@@ -177,7 +177,18 @@ const TRANSLATIONS = {
     toast_sending_test: "Sending test message to ",
     toast_save_error: "Error saving configuration: ",
     toast_up_to_date: "WAHA is up to date!",
-    toast_update_available: "A new version of WAHA is available on GitHub!"
+    toast_update_available: "A new version of WAHA is available on GitHub!",
+    toast_cannot_delete_online: "Cannot delete account while Online. Please disconnect first.",
+    toast_deleting: "Deleting account: ",
+    toast_deleted_success: "Account deleted successfully: ",
+    toast_disconnecting: "Disconnecting session: ",
+    toast_disconnected: "Session disconnected: ",
+    toast_downloading_update: "Downloading and installing update package from GitHub...",
+    toast_update_success: "Dashboard updated successfully! Refreshing page...",
+    toast_update_error: "Update error: ",
+    toast_session_initialized: "Account initialized successfully: ",
+    toast_restarting: "Restarting session: ",
+    toast_restart_success: "Restart signal sent for session: "
   },
 
   // ================= VIETNAMESE =================
@@ -328,7 +339,18 @@ const TRANSLATIONS = {
     toast_sending_test: "Đang gửi tin nhắn thử nghiệm tới ",
     toast_save_error: "Lỗi khi lưu cấu hình: ",
     toast_up_to_date: "WAHA đang ở phiên bản mới nhất!",
-    toast_update_available: "Đã có phiên bản WAHA mới trên GitHub!"
+    toast_update_available: "Đã có phiên bản WAHA mới trên GitHub!",
+    toast_cannot_delete_online: "Không thể xóa tài khoản khi đang Online. Vui lòng ngắt kết nối trước.",
+    toast_deleting: "Đang xóa tài khoản: ",
+    toast_deleted_success: "Đã xóa tài khoản thành công: ",
+    toast_disconnecting: "Đang ngắt kết nối phiên: ",
+    toast_disconnected: "Đã ngắt kết nối phiên: ",
+    toast_downloading_update: "Đang tải và cài đặt gói cập nhật mới từ GitHub...",
+    toast_update_success: "Cập nhật Dashboard thành công! Đang làm mới trang...",
+    toast_update_error: "Lỗi cập nhật: ",
+    toast_session_initialized: "Đã khởi tạo tài khoản thành công: ",
+    toast_restarting: "Đang khởi động lại phiên: ",
+    toast_restart_success: "Đã gửi tín hiệu khởi động lại phiên: "
   },
 
   // ================= INDONESIAN =================
@@ -466,7 +488,18 @@ const TRANSLATIONS = {
     toast_sending_test: "Mengirim pesan uji ke ",
     toast_save_error: "Terjadi kesalahan saat menyimpan: ",
     toast_up_to_date: "WAHA sudah versi terbaru!",
-    toast_update_available: "Versi baru WAHA tersedia di GitHub!"
+    toast_update_available: "Versi baru WAHA tersedia di GitHub!",
+    toast_cannot_delete_online: "Tidak dapat menghapus akun saat Online. Silakan putuskan sambungan terlebih dahulu.",
+    toast_deleting: "Menghapus akun: ",
+    toast_deleted_success: "Akun berhasil dihapus: ",
+    toast_disconnecting: "Memutuskan sambungan sesi: ",
+    toast_disconnected: "Sesi berhasil diputuskan: ",
+    toast_downloading_update: "Mengunduh dan memasang paket pembaruan dari GitHub...",
+    toast_update_success: "Dashboard berhasil diperbarui! Menyegarkan halaman...",
+    toast_update_error: "Kesalahan pembaruan: ",
+    toast_session_initialized: "Akun berhasil diinisialisasi: ",
+    toast_restarting: "Memulai ulang sesi: ",
+    toast_restart_success: "Sinyal mulai ulang terkirim untuk sesi: "
   },
 
   // ================= PORTUGUESE (BRAZIL) =================
@@ -604,7 +637,18 @@ const TRANSLATIONS = {
     toast_sending_test: "Enviando mensagem de teste para ",
     toast_save_error: "Erro ao salvar as configurações: ",
     toast_up_to_date: "O WAHA está atualizado!",
-    toast_update_available: "Uma nova versão do WAHA está disponível no GitHub!"
+    toast_update_available: "Uma nova versão do WAHA está disponível no GitHub!",
+    toast_cannot_delete_online: "Não é possível excluir a conta enquanto estiver online. Desconecte primeiro.",
+    toast_deleting: "Excluindo conta: ",
+    toast_deleted_success: "Conta excluída com sucesso: ",
+    toast_disconnecting: "Desconectando sessão: ",
+    toast_disconnected: "Sessão desconectada com sucesso: ",
+    toast_downloading_update: "Baixando e instalando o pacote de atualização do GitHub...",
+    toast_update_success: "Dashboard atualizado com sucesso! Atualizando página...",
+    toast_update_error: "Erro de atualização: ",
+    toast_session_initialized: "Conta inicializada com sucesso: ",
+    toast_restarting: "Reiniciando sessão: ",
+    toast_restart_success: "Sinal de reinicialização enviado para a sessão: "
   }
 };
 

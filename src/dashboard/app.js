@@ -215,7 +215,8 @@ function switchActiveSession(name) {
   activeSession = name;
   lastLoadedQrSession = null;
   switchPairTab('qr');
-  showToast(`Đã chuyển sang quản lý: ${name}`, 'info');
+  const switchedMsg = typeof getTranslation === 'function' ? getTranslation('toast_switched_session', 'Switched to session: ') : 'Switched to session: ';
+  showToast(`${switchedMsg} ${name}`, 'info');
   refreshAllData();
   fetchQrCode(true);
 }
@@ -482,11 +483,13 @@ async function requestPairingCode() {
   const phone = phoneInput.value.trim().replace(/[^0-9]/g, '');
 
   if (!phone || phone.length < 9) {
-    showToast('Vui lòng nhập số điện thoại hợp lệ (ví dụ: 84384524243)', 'error');
+    const invalidMsg = typeof getTranslation === 'function' ? getTranslation('toast_phone_invalid', 'Please enter a valid phone number (e.g. 14155552671)') : 'Please enter a valid phone number (e.g. 14155552671)';
+    showToast(invalidMsg, 'error');
     return;
   }
 
-  showToast(`Đang yêu cầu mã ghép nối cho ${activeSession}...`, 'info');
+  const reqMsg = typeof getTranslation === 'function' ? getTranslation('toast_requesting_code', 'Requesting pairing code for ') : 'Requesting pairing code for ';
+  showToast(`${reqMsg} ${activeSession}...`, 'info');
 
   try {
     const res = await fetch(`${API_BASE}/api/${activeSession}/auth/request-code`, {
@@ -500,7 +503,7 @@ async function requestPairingCode() {
 
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.message || `Lỗi máy chủ (${res.status})`);
+      throw new Error(errData.message || `HTTP ${res.status}`);
     }
 
     const data = await res.json();
@@ -510,10 +513,12 @@ async function requestPairingCode() {
     if (display && data.code) {
       display.textContent = data.code;
       if (resultBox) resultBox.classList.remove('hidden');
-      showToast('Đã nhận mã ghép nối thành công!', 'success');
+      const codeSuccess = typeof getTranslation === 'function' ? getTranslation('toast_code_success', 'Pairing code received successfully!') : 'Pairing code received successfully!';
+      showToast(codeSuccess, 'success');
     }
   } catch (err) {
-    showToast(`Không thể lấy mã: ${err.message}`, 'error');
+    const codeErr = typeof getTranslation === 'function' ? getTranslation('toast_code_error', 'Unable to get code: ') : 'Unable to get code: ';
+    showToast(`${codeErr} ${err.message}`, 'error');
   }
 }
 
@@ -586,9 +591,9 @@ async function saveChatbotxConfig(event) {
   const includeGroups = document.getElementById('cbxIncludeGroupsInput').checked;
 
   const btn = document.getElementById('saveConfigBtn');
-  const originalText = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i><span>Đang lưu...</span>`;
+  const savingText = typeof getTranslation === 'function' ? getTranslation('step3_saving', 'Saving...') : 'Saving...';
+  btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i><span>${savingText}</span>`;
 
   const appId = getAppIdForSession(activeSession);
   const payload = {
@@ -621,10 +626,12 @@ async function saveChatbotxConfig(event) {
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-    showToast(`Đã liên kết kênh ChatbotX thành công!`, 'success');
+    const savedSuccess = typeof getTranslation === 'function' ? getTranslation('toast_saved_success', 'ChatbotX channel linked successfully!') : 'ChatbotX channel linked successfully!';
+    showToast(savedSuccess, 'success');
     await loadChatbotxConfig();
   } catch (err) {
-    showToast(`Lỗi khi lưu cấu hình: ${err.message}`, 'error');
+    const saveErr = typeof getTranslation === 'function' ? getTranslation('toast_save_error', 'Error saving configuration: ') : 'Error saving configuration: ';
+    showToast(`${saveErr} ${err.message}`, 'error');
   } finally {
     btn.disabled = false;
   }
@@ -641,7 +648,8 @@ async function sendTestMessage() {
   }
 
   if (!recipient || recipient.length < 9) {
-    showToast('Vui lòng nhập số điện thoại hợp lệ (ví dụ: 84384524243)', 'error');
+    const invalidMsg = typeof getTranslation === 'function' ? getTranslation('toast_phone_invalid', 'Please enter a valid phone number (e.g. 14155552671)') : 'Please enter a valid phone number (e.g. 14155552671)';
+    showToast(invalidMsg, 'error');
     return;
   }
 
@@ -718,7 +726,8 @@ async function submitNewSession(event) {
     }
 
     closeNewSessionModal();
-    showToast(`Session '${name}' initialized successfully!`, 'success');
+    const initMsg = typeof getTranslation === 'function' ? getTranslation('toast_session_initialized', 'Account initialized successfully: ') : 'Account initialized successfully: ';
+    showToast(`${initMsg} '${name}'`, 'success');
     activeSession = name;
     lastLoadedQrSession = null;
     switchPairTab('qr');
@@ -734,15 +743,17 @@ async function submitNewSession(event) {
 }
 
 async function restartSession() {
-  const confirmMsg = `Restart session '${activeSession}'?`;
+  const confirmMsg = typeof getTranslation === 'function' ? getTranslation('confirm_restart', `Restart session '${activeSession}'?`) : `Restart session '${activeSession}'?`;
   if (!confirm(confirmMsg)) return;
-  showToast(`Restarting ${activeSession}...`, 'info');
+  const restartMsg = typeof getTranslation === 'function' ? getTranslation('toast_restarting', 'Restarting session: ') : 'Restarting session: ';
+  showToast(`${restartMsg} ${activeSession}...`, 'info');
   try {
     await fetch(`${API_BASE}/api/sessions/${activeSession}/restart`, {
       method: 'POST',
       headers: getAuthHeaders()
     });
-    showToast(`Restart signal sent for '${activeSession}'!`, 'success');
+    const restartOk = typeof getTranslation === 'function' ? getTranslation('toast_restart_success', 'Restart signal sent for session: ') : 'Restart signal sent for session: ';
+    showToast(`${restartOk} '${activeSession}'!`, 'success');
     setTimeout(refreshAllData, 3000);
   } catch (err) {
     showToast(`Error: ${err.message}`, 'error');
@@ -752,7 +763,8 @@ async function restartSession() {
 async function logoutSession() {
   const confirmMsg = typeof getTranslation === 'function' ? getTranslation('confirm_disconnect', 'Disconnect this session?') : 'Disconnect this session?';
   if (!confirm(confirmMsg)) return;
-  showToast(`Đang hủy liên kết tài khoản ${activeSession}...`, 'warning');
+  const discMsg = typeof getTranslation === 'function' ? getTranslation('toast_disconnecting', 'Disconnecting session: ') : 'Disconnecting session: ';
+  showToast(`${discMsg} ${activeSession}...`, 'warning');
   try {
     // 1. Logout WhatsApp session
     await fetch(`${API_BASE}/api/sessions/${activeSession}/logout`, {
@@ -771,7 +783,8 @@ async function logoutSession() {
       console.warn('App link cleanup on disconnect:', e);
     }
 
-    showToast(`Đã hủy liên kết '${activeSession}' thành công.`, 'info');
+    const discOk = typeof getTranslation === 'function' ? getTranslation('toast_disconnected', 'Session disconnected: ') : 'Session disconnected: ';
+    showToast(`${discOk} '${activeSession}'`, 'info');
     
     // 3. Immediately switch to QR tab and refresh UI & Step 3 token state
     lastLoadedQrSession = null;
@@ -790,7 +803,8 @@ async function deleteSessionDirect(event, sessionNameToDelete) {
   const targetSession = allSessions.find((s) => s.name === sessionNameToDelete);
   const isOnline = targetSession && (targetSession.status === 'WORKING' || targetSession.status === 'CONNECTED' || (targetSession.engine && targetSession.engine.state === 'CONNECTED'));
   if (isOnline) {
-    showToast('Không thể xóa tài khoản khi đang Online. Vui lòng Disconnect trước.', 'warning');
+    const cannotDel = typeof getTranslation === 'function' ? getTranslation('toast_cannot_delete_online', 'Cannot delete account while Online. Please disconnect first.') : 'Cannot delete account while Online. Please disconnect first.';
+    showToast(cannotDel, 'warning');
     return;
   }
 
@@ -799,7 +813,8 @@ async function deleteSessionDirect(event, sessionNameToDelete) {
     : `Are you sure you want to delete account '${sessionNameToDelete}'?`;
   if (!confirm(confirmMsg)) return;
 
-  showToast(`Đang xóa tài khoản '${sessionNameToDelete}'...`, 'warning');
+  const delMsg = typeof getTranslation === 'function' ? getTranslation('toast_deleting', 'Deleting account: ') : 'Deleting account: ';
+  showToast(`${delMsg} '${sessionNameToDelete}'...`, 'warning');
   try {
     const res = await fetch(`${API_BASE}/api/sessions/${sessionNameToDelete}`, {
       method: 'DELETE',
@@ -811,13 +826,14 @@ async function deleteSessionDirect(event, sessionNameToDelete) {
       throw new Error(errData.message || `HTTP ${res.status}`);
     }
 
-    showToast(`Đã xóa tài khoản '${sessionNameToDelete}' thành công.`, 'success');
+    const delOk = typeof getTranslation === 'function' ? getTranslation('toast_deleted_success', 'Account deleted successfully: ') : 'Account deleted successfully: ';
+    showToast(`${delOk} '${sessionNameToDelete}'`, 'success');
     if (activeSession === sessionNameToDelete) {
       activeSession = null;
     }
     await refreshAllData();
   } catch (err) {
-    showToast(`Lỗi khi xóa tài khoản: ${err.message}`, 'error');
+    showToast(`Error: ${err.message}`, 'error');
   }
 }
 
@@ -915,7 +931,8 @@ async function performDashboardUpdate() {
   if (icon) icon.className = 'ph-bold ph-spinner animate-spin';
   if (text) text.textContent = typeof getTranslation === 'function' ? getTranslation('common_loading', 'Updating...') : 'Updating...';
 
-  showToast('Đang tải và cài đặt gói cập nhật mới từ GitHub...', 'info');
+  const downMsg = typeof getTranslation === 'function' ? getTranslation('toast_downloading_update', 'Downloading and installing update package from GitHub...') : 'Downloading and installing update package from GitHub...';
+  showToast(downMsg, 'info');
 
   try {
     const res = await fetch(`${API_BASE}/api/server/update-dashboard`, {
@@ -929,7 +946,8 @@ async function performDashboardUpdate() {
       throw new Error(errData.message || `HTTP ${res.status}`);
     }
 
-    showToast('Cập nhật Dashboard thành công! Đang làm mới trang...', 'success');
+    const upOk = typeof getTranslation === 'function' ? getTranslation('toast_update_success', 'Dashboard updated successfully! Refreshing page...') : 'Dashboard updated successfully! Refreshing page...';
+    showToast(upOk, 'success');
     closeUpdateModal();
 
     setTimeout(() => {
@@ -937,10 +955,11 @@ async function performDashboardUpdate() {
     }, 1500);
 
   } catch (err) {
-    showToast(`Lỗi cập nhật: ${err.message}`, 'error');
+    const upErr = typeof getTranslation === 'function' ? getTranslation('toast_update_error', 'Update error: ') : 'Update error: ';
+    showToast(`${upErr} ${err.message}`, 'error');
     btn.disabled = false;
     if (icon) icon.className = 'ph-bold ph-rocket-launch';
-    if (text) text.textContent = '🚀 Thử lại';
+    if (text) text.textContent = '🚀 ' + (typeof getTranslation === 'function' ? getTranslation('common_retry', 'Retry') : 'Retry');
   }
 }
 
